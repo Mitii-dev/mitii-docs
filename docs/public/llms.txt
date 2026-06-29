@@ -1,0 +1,22 @@
+# Mitii AI Agent Documentation
+
+> Local-first VS Code AI coding agent with precise repo context and safe Plan/Act workflow.
+
+- Website: https://mitii.dev
+- Docs: https://docs.mitii.dev
+
+## Docs
+
+- [Overview](/)
+- [Getting Started](/getting-started/)
+- [Connect a Model](/getting-started/connect-model)
+- [Features](/features/)
+- [Configuration](/configuration)
+- [Architecture](/architecture)
+- [Development](/development)
+
+## Links
+
+- GitHub: https://github.com/codewithshinde/thunder-ai-agent
+- Discord: https://discord.gg/sa8rubf6HH
+- Issues: https://github.com/codewithshinde/thunder-ai-agent/issues
