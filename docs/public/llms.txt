@@ -1,13 +1,14 @@
 # Mitii AI Agent Documentation
 
-> Local-first VS Code AI coding agent with precise repo context and safe Plan/Act workflow.
+> Local-first VS Code AI coding agent with deep repo context, Plan/Act workflow, 8 LLM providers, MCP integrations, and tunable safety.
 
 - Website: https://mitii.dev
 - Docs: https://docs.mitii.dev
 
-## Docs
+## Core docs
 
 - [Overview](/)
+- [Why Mitii?](/why-mitii)
 - [Getting Started](/getting-started/)
 - [Connect a Model](/getting-started/connect-model)
 - [Features](/features/)
@@ -15,8 +16,32 @@
 - [Architecture](/architecture)
 - [Development](/development)
 
+## Implementation guides
+
+- [Recent improvements (v2.6)](/implementation/recent-improvements)
+- [Plan / Act workflow](/implementation/plan-act)
+- [LLM providers](/implementation/providers)
+- [Context & indexing](/implementation/context-indexing)
+- [Safety & approvals](/implementation/safety)
+- [Memory & checkpoints](/implementation/memory-checkpoints)
+- [MCP integrations](/implementation/mcp)
+- [Built-in tools](/implementation/tools)
+
+## Key differentiators
+
+- Local-first: workspace data in .mitii/ on your machine
+- Deep indexing: FTS5, tree-sitter, PageRank repo map, MiniLM vectors
+- Plan before Act: separate modes and optional split models
+- Tunable safety: 5 autonomy presets, 5 approval modes, inline diff
+- 8 LLM providers: Ollama, OpenAI, Anthropic, Gemini, DeepSeek, Cursor, Codex, Echo
+- MCP: stdio, HTTP SSE, Streamable HTTP with bearer auth
+- Memory + git-stash checkpoints with sidebar UI panels
+- Context debugger with live budget visibility
+- JSONL audit logs for every tool and approval
+
 ## Links
 
-- GitHub: https://github.com/codewithshinde/thunder-ai-agent
+- Agent repo: https://github.com/codewithshinde/thunder-ai-agent
+- Docs repo: https://github.com/codewithshinde/mitii-docs
 - Discord: https://discord.gg/sa8rubf6HH
 - Issues: https://github.com/codewithshinde/thunder-ai-agent/issues

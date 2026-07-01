@@ -1,8 +1,8 @@
 # Connect a Model
 
-Mitii talks to any provider that implements the OpenAI chat completions API.
+Mitii supports eight provider types. Pick the path that fits your workflow.
 
-## Ollama (recommended for local)
+## Ollama (recommended local)
 
 1. [Install Ollama](https://ollama.com/)
 2. Pull a coding model:
@@ -11,34 +11,85 @@ Mitii talks to any provider that implements the OpenAI chat completions API.
 ollama pull qwen3-coder:30b
 ```
 
-3. In Mitii settings:
+3. In Mitii **Settings → Model**:
+
+| Field | Value |
+|-------|-------|
+| Provider type | OpenAI-compatible |
+| Base URL | `http://localhost:11434/v1` |
+| Model | `qwen3-coder:30b` |
+
+4. Click **Test connection** → Save
+
+## vLLM / LM Studio / self-hosted
+
+Set provider type to **OpenAI-compatible**. Point base URL at your server (include `/v1` if required). Add API key if needed.
+
+## Anthropic (Claude)
+
+| Field | Value |
+|-------|-------|
+| Provider type | Anthropic |
+| Model | `claude-sonnet-4-20250514` |
+| Context window | `200000` |
+
+Add API key in settings. Mitii uses the native Messages API.
+
+## Google Gemini
+
+| Field | Value |
+|-------|-------|
+| Provider type | Gemini |
+| Model | `gemini-2.0-flash` |
+
+Add API key in settings.
+
+## OpenAI / DeepSeek / Cursor / Codex
+
+Select the matching provider type in settings. Defaults fill base URL and model name. Add API key and test connection.
+
+## Cloud OpenAI-compatible
+
+Works with Azure OpenAI, Together, Groq, or any chat-completions API:
 
 ```json
 {
   "thunder.provider.type": "openai-compatible",
-  "thunder.provider.baseUrl": "http://localhost:11434/v1",
-  "thunder.provider.model": "qwen3-coder:30b"
+  "thunder.provider.baseUrl": "https://your-endpoint/v1",
+  "thunder.provider.model": "your-model"
 }
 ```
 
-## vLLM or other self-hosted endpoints
+## Plan vs Act models
 
-Set `thunder.provider.baseUrl` to your server URL (include `/v1` if your server expects it). Add an API key in the settings UI if required.
+Use a fast model for planning and a strong model for implementation:
 
-## Cloud providers
+```json
+{
+  "thunder.provider.model": "qwen3-coder:30b",
+  "thunder.agent.planModel": "qwen3.5:4b",
+  "thunder.agent.actModel": "qwen3-coder:30b"
+}
+```
 
-Any OpenAI-compatible API works — set the base URL, model name, and API key. Mitii does not send code to a central Mitii server; traffic goes only to the endpoint you configure.
+Configure in **Settings → Agent**.
 
 ## Echo provider (no LLM)
 
-Set `thunder.provider.type` to `echo` to exercise the UI, approval flow, and tool loop without a running model.
+Set provider type to **Echo** to test UI, approvals, indexing, and tool routing without network calls.
+
+## Privacy
+
+Mitii does not send code to a Mitii server. Traffic goes only to the endpoint you configure. Indexes and logs stay in `.mitii/` on your machine.
 
 ## Troubleshooting
 
 | Issue | Fix |
 |-------|-----|
-| Connection refused | Confirm Ollama/vLLM is running and the base URL is correct |
-| Model not found | Check the exact model tag with `ollama list` |
-| Slow responses | Use a smaller model or enable GPU acceleration for Ollama |
+| Connection refused | Start Ollama (`ollama serve`) or check base URL |
+| Model not found | `ollama list` — use exact model tag |
+| Anthropic/Gemini auth error | Verify API key in settings |
+| Slow responses | Smaller model or GPU for Ollama |
+| Context trimmed | Increase `thunder.provider.contextWindow` |
 
-See [Configuration](/configuration) for the full settings reference.
+[Full provider reference →](/implementation/providers) · [Configuration →](/configuration)

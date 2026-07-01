@@ -4,7 +4,7 @@ layout: home
 hero:
   name: Mitii AI Agent
   text: Local-first coding agent
-  tagline: Your local-first AI coding agent for complex work. Read files, write code, run commands — all with your approval.
+  tagline: Deep repo context, Plan/Act workflow, tunable safety — your code stays on your machine.
   image:
     src: /logo.svg
     alt: Mitii AI Agent
@@ -13,53 +13,64 @@ hero:
       text: Get Started
       link: /getting-started/
     - theme: alt
+      text: Why Mitii?
+      link: /why-mitii
+    - theme: alt
       text: View on GitHub
       link: https://github.com/codewithshinde/thunder-ai-agent
 
 features:
   - icon: 🔍
     title: Deep repo context
-    details: SQLite + FTS5 indexing, tree-sitter symbols, PageRank repo map, and optional MiniLM vectors — the agent knows your codebase before it edits.
+    details: SQLite + FTS5, tree-sitter symbols, PageRank repo map, MiniLM vectors, hybrid retriever, and a live context debugger.
   - icon: 🛡️
     title: Plan / Act / Review
-    details: Plan before you touch code, act with tools under approval policies, and review without rewriting.
+    details: Plan before you edit. Separate plan and act models. Execute with approval gates. Review without rewriting.
   - icon: 🔑
-    title: Bring your own model
-    details: Ollama, vLLM, or any OpenAI-compatible endpoint. Your code stays on your machine.
+    title: 8 LLM providers
+    details: Ollama, OpenAI, Anthropic, Gemini, DeepSeek, Cursor, Codex — or Echo for testing. BYOM, local-first.
   - icon: 🔌
     title: MCP integrations
-    details: Built-in filesystem, memory, and sequential-thinking servers plus workspace mcp.json support.
-  - icon: 📋
-    title: Audit trail
-    details: JSONL session logs in .thunder/logs/ — every tool call, approval, token usage, and timing.
+    details: Built-in filesystem, memory, sequential-thinking. Remote SSE/HTTP servers. Bearer OAuth headers.
+  - icon: 🧠
+    title: Memory & checkpoints
+    details: Long-term observations, memory browser, git-stash checkpoints, restore from sidebar.
   - icon: ⚙️
     title: Tunable safety
-    details: Autonomy presets from safe through enterprise. Dangerous commands blocked at the policy layer.
+    details: Five autonomy presets, inline diff accept/reject, dangerous command blocking, JSONL audit logs.
 ---
 
 ## What is Mitii?
 
-Mitii is an AI coding agent that lives in VS Code. It can read and write files, run terminal commands, use MCP tools, and help you build features through natural conversation. Every write and shell action can require your explicit approval. You're always in control.
+Mitii is an AI coding agent inside VS Code (and Cursor, Windsurf, and other compatible editors). It reads and writes files, runs terminal commands, uses MCP tools, and helps you ship features through natural conversation. Every write and shell action can require your explicit approval.
+
+**[What makes Mitii different →](/why-mitii)**
 
 ## Model access
-
-Choose the model access path that fits your workflow:
 
 <div class="card-grid">
 
 <div class="card">
 
-### Local runtime
+### Local (Ollama / vLLM)
 
-Run models on your machine with **Ollama** or **vLLM**. Default endpoint: `http://localhost:11434/v1`.
+Run models on your machine. Default: `http://localhost:11434/v1`. Zero data leaves your network.
 
 </div>
 
 <div class="card">
 
-### OpenAI-compatible API
+### Cloud providers
 
-Point Mitii at any cloud or self-hosted endpoint that speaks the OpenAI chat completions API.
+Native **Anthropic** and **Gemini** APIs. OpenAI, DeepSeek, Cursor, Codex via first-class presets.
+
+</div>
+
+<div class="card">
+
+### OpenAI-compatible
+
+Any endpoint that speaks chat completions — Azure, proxies, self-hosted.
 
 </div>
 
@@ -67,33 +78,45 @@ Point Mitii at any cloud or self-hosted endpoint that speaks the OpenAI chat com
 
 ### Echo provider
 
-Test the UI and tool loop without a running LLM — useful for development and demos.
+Test UI, approvals, indexing, and tool loop without a running LLM.
 
 </div>
 
 </div>
 
-## Applications
+[Full provider guide →](/implementation/providers)
+
+## Documentation map
 
 <div class="card-grid">
 
 <div class="card">
 
-### VS Code Extension
+### Getting started
 
-AI coding assistant in your editor. Create files, run commands, browse context, and use tools with human-in-the-loop approval.
+Install, connect a model, first session.
 
-[Getting started →](/getting-started/)
+[Start here →](/getting-started/)
 
 </div>
 
 <div class="card">
 
-### Documentation
+### Implementation guides
 
-Guides for installation, configuration, architecture, and development.
+Plan/Act, providers, MCP, safety, context, tools.
 
-[Read the docs →](/getting-started/)
+[Browse guides →](/implementation/recent-improvements)
+
+</div>
+
+<div class="card">
+
+### Architecture
+
+System design, data flow, `.mitii/` layout.
+
+[Read architecture →](/architecture)
 
 </div>
 
@@ -107,9 +130,9 @@ Guides for installation, configuration, architecture, and development.
 
 ### GitHub
 
-Source code, issues, and pull requests.
+Source, issues, pull requests.
 
-[github.com/codewithshinde/thunder-ai-agent](https://github.com/codewithshinde/thunder-ai-agent)
+[thunder-ai-agent](https://github.com/codewithshinde/thunder-ai-agent)
 
 </div>
 
@@ -117,7 +140,7 @@ Source code, issues, and pull requests.
 
 ### Discord
 
-Chat with the community, ask questions, and share feedback.
+Questions, feedback, community.
 
 [Join Discord](https://discord.gg/sa8rubf6HH)
 
@@ -125,6 +148,6 @@ Chat with the community, ask questions, and share feedback.
 
 </div>
 
-## Other editor support
+## Editor support
 
-Mitii runs as a VS Code extension and works in **VS Code**, **Cursor**, **Windsurf**, and other VS Code-compatible editors.
+Mitii runs as a VS Code extension in **VS Code**, **Cursor**, **Windsurf**, and other VS Code-compatible editors.

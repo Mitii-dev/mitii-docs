@@ -24,9 +24,9 @@ export default defineConfig({
     siteTitle: AGENT_NAME,
     nav: [
       { text: 'Overview', link: '/' },
+      { text: 'Why Mitii', link: '/why-mitii' },
       { text: 'Getting Started', link: '/getting-started/' },
       { text: 'Features', link: '/features/' },
-      { text: 'Configuration', link: '/configuration' },
       { text: 'Architecture', link: '/architecture' },
       { text: 'Website', link: WEBSITE_URL },
       {
@@ -43,7 +43,9 @@ export default defineConfig({
         text: 'Introduction',
         items: [
           { text: 'Overview', link: '/' },
+          { text: 'Why Mitii?', link: '/why-mitii' },
           { text: 'Getting Started', link: '/getting-started/' },
+          { text: 'Connect a Model', link: '/getting-started/connect-model' },
         ],
       },
       {
@@ -53,6 +55,19 @@ export default defineConfig({
           { text: 'Configuration', link: '/configuration' },
           { text: 'Architecture', link: '/architecture' },
           { text: 'Development', link: '/development' },
+        ],
+      },
+      {
+        text: 'Implementation',
+        items: [
+          { text: 'Recent improvements', link: '/implementation/recent-improvements' },
+          { text: 'Plan / Act workflow', link: '/implementation/plan-act' },
+          { text: 'LLM providers', link: '/implementation/providers' },
+          { text: 'Context & indexing', link: '/implementation/context-indexing' },
+          { text: 'Safety & approvals', link: '/implementation/safety' },
+          { text: 'Memory & checkpoints', link: '/implementation/memory-checkpoints' },
+          { text: 'MCP integrations', link: '/implementation/mcp' },
+          { text: 'Built-in tools', link: '/implementation/tools' },
         ],
       },
     ],
