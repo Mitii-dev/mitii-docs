@@ -107,4 +107,31 @@ Legacy `.thunder/` paths are still ignored for backward compatibility.
 
 ## Test coverage
 
-New Vitest suites cover providers, autonomy presets, MCP auth, plan/act config, checkpoint strategy, and `fetch_web` policy (`test/features.test.ts`).
+New Vitest suites cover providers, autonomy presets, MCP auth, plan/act config, checkpoint strategy, `fetch_web` policy, and planning skill routing (`test/features.test.ts`, `test/plan-skill-routing.test.ts`).
+
+## Cursor-style Plan mode UI
+
+Plan mode now uses a dedicated **Planner** panel (above chat) instead of duplicating the plan in chat prose:
+
+| UI element | What it shows |
+|------------|----------------|
+| **Planning pipeline** | Live status: discovery → requirement analysis → compile |
+| **Requirement analysis** | Collapsible section streamed into the panel |
+| **Skill chips** | Applied playbooks (`planning-and-task-breakdown`, etc.) |
+| **Phased steps** | Diagnostics / Review / Execute / Verify groups |
+| **Step details** | Objective, tools, success criteria, dependencies, risk |
+
+Chat shows a short summary when the plan is ready; the panel is the single source of truth.
+
+## Planning skills integration
+
+Previously, `use_skill` was allowed during planning but never prompted or auto-loaded — the model often searched source code instead of loading playbooks.
+
+Now:
+
+1. **PlanOrchestrator** resolves skills by intent and pre-loads playbook content
+2. **Discovery / analysis / compiler prompts** include skill guidance and injected playbooks
+3. **Plan nudges** mention `use_skill` when grounding is missing
+4. **Quality gate** expects verification-oriented success criteria on multi-step plans
+
+Bundled skills install to `.mitii/skills/` on workspace scaffold (8 playbooks including `planning-and-task-breakdown` and `using-agent-skills`).

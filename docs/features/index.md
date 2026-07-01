@@ -3,7 +3,7 @@
 Mitii combines **deep workspace indexing** with a **safe Plan/Act agent workflow** — local-first, approval-gated, and auditable.
 
 ::: tip New in v2.6
-Context debugger, memory browser, checkpoint panel, 8 LLM providers, plan/act model split, MCP HTTP/SSE, git-stash checkpoints, and inline diff accept/reject. See [Recent improvements](/implementation/recent-improvements).
+Context debugger, memory browser, checkpoint panel, 8 LLM providers, plan/act model split, MCP HTTP/SSE, git-stash checkpoints, inline diff accept/reject, **Cursor-style Planner UI**, and **planning skills auto-load**. See [Recent improvements](/implementation/recent-improvements).
 :::
 
 ## Why Mitii?
@@ -30,8 +30,10 @@ Context debugger, memory browser, checkpoint panel, 8 LLM providers, plan/act mo
 - **Tool loop** — 20+ built-in tools + dynamic MCP tools
 - **Research subagents** — `spawn_research_agent` for parallel read-only exploration
 - **Task decomposition** — multi-step plans with lifecycle tracking and persistence
+- **Cursor-style Planner panel** — phased steps, requirement analysis, skill chips, expandable step details in Plan mode
+- **Planning skills** — auto-loads `planning-and-task-breakdown` and related playbooks during orchestrated planning
 - **Post-edit verification** — configurable lint/test after Act-mode runs
-- **Skills catalog** — `.mitii/skills/SKILL.md` invoked via `use_skill`
+- **Skills catalog** — `.mitii/skills/SKILL.md` invoked via `use_skill` and auto-injected during planning
 - **Auto-continue** — agent keeps working across step-limit boundaries
 - **Conversation compaction** — long sessions trimmed intelligently
 

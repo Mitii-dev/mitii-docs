@@ -40,7 +40,31 @@ When `thunder.agent.orchestrationEnabled` is true (default):
 - Plans persist to SQLite `task_plans` and `.mitii/tasks/<id>/plan.json`
 - Plan tools: `mark_step_complete`, `propose_plan_mutation`
 
+**Planning skills** — for structured plans, Mitii auto-loads workspace playbooks from `.mitii/skills/`:
+
+| Skill | When loaded |
+|-------|-------------|
+| `using-agent-skills` | Every orchestrated plan |
+| `planning-and-task-breakdown` | Every orchestrated plan |
+| `audit-cleanup` | Audit / cleanup tasks |
+| `debugging-and-error-recovery` | Bugfix / debug tasks |
+
+Skill content is injected into discovery, requirement analysis, and isolated plan compilation. The Planner panel shows applied skills, requirement analysis, phased steps, tools, and success criteria (Cursor-style).
+
 **TaskAnalyzer** decides whether to use the planner or a faster direct agent path in Agent mode.
+
+```mermaid
+flowchart TB
+  subgraph planMode [Plan mode pipeline]
+    R[Route intent + scope]
+    S[Load planning skills]
+    D[Read-only discovery]
+    A[Requirement analysis]
+    C[Isolated plan compiler]
+    P[Planner panel + plan.json]
+  end
+  R --> S --> D --> A --> C --> P
+```
 
 ## Plan vs Act models
 
