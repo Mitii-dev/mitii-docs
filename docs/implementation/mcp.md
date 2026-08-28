@@ -1,26 +1,37 @@
 # MCP integrations
 
-Mitii implements the [Model Context Protocol](https://modelcontextprotocol.io/) so you can extend the agent with external tools.
+Mitii speaks the [Model Context Protocol](https://modelcontextprotocol.io/) so you can plug in external tools — file access, memory graphs, custom APIs — without writing any code. MCP is an **app-level** feature: the VS Code extension and CLI own the server lifecycle, while the V8 engine enforces every tool call through the same Decision Policy gate as built-in tools.
 
-## Built-in servers
+## Turning MCP on
 
-Preloaded when `thunder.mcp.enabled` and `thunder.mcp.preloadBuiltin` are true:
+MCP is **off by default**. Enable it in **Settings → Integrations**:
 
-| Server | Package | Purpose |
-|--------|---------|---------|
-| `filesystem` | `@modelcontextprotocol/server-filesystem` | Scoped file access |
-| `memory` | `@modelcontextprotocol/server-memory` | Knowledge graph memory |
-| `sequential-thinking` | `@modelcontextprotocol/server-sequential-thinking` | Structured reasoning |
+| Setting | What it does |
+|---------|-------------|
+| `mitii.mcp.enabled` | Master switch. When off, no MCP servers start. |
+| `mitii.mcp.servers` | Your installed server list. Enable, configure, or delete each one here. |
 
-Toggle individual servers in **Settings → Integrations**.
+You can also install servers from the **built-in catalog** — picking one copies its config into your workspace list so you can tweak it.
+
+## Built-in catalog servers
+
+These ship with Mitii and are one click to install:
+
+| Server | What it gives you |
+|--------|-------------------|
+| `filesystem` | Scoped read/write access to a folder you choose |
+| `memory` | A knowledge-graph store the agent can query |
+| `sequential-thinking` | Structured step-by-step reasoning traces |
 
 ## Transport types
 
-| Type | Use case | Required fields |
-|------|----------|-----------------|
-| `stdio` | Local `npx` servers | `command`, `args` |
-| `sse` | Remote SSE endpoint | `url`, optional `headers` |
-| `streamable-http` | MCP Streamable HTTP | `url`, optional `headers` |
+Each server connects over one of three transports:
+
+| Type | When to use | Required fields |
+|------|-------------|-----------------|
+| `stdio` | Local process (e.g. `npx`) | `command`, `args` |
+| `sse` | Remote Server-Sent Events endpoint | `url`, optional `headers` |
+| `streamable-http` | MCP Streamable HTTP (newer spec) | `url`, optional `headers` |
 
 ### Stdio example (`.mitii/mcp.json`)
 
@@ -67,52 +78,58 @@ Toggle individual servers in **Settings → Integrations**.
 }
 ```
 
-## Configuration sources (merged)
+## Where configs are read (merge order)
 
-1. Built-in servers (if preload enabled)
-2. VS Code `thunder.mcp.servers`
+Mitii merges these sources top-to-bottom; later entries override earlier ones with the same server name:
+
+1. Built-in catalog (if you installed from it)
+2. VS Code setting `mitii.mcp.servers`
 3. Workspace `.mitii/mcp.json`
-4. Workspace `.mcp.json`
+4. Workspace `.mcp.json` (shared with other MCP clients)
 
-Workspace entries override settings with the same server name.
+## How MCP tools run
 
-## Runtime behavior
+- Tools are exposed to the model as `mcp__{server}__{tool}` (name capped at 128 chars).
+- Every call passes through **Decision Policy** → **Tool Runtime**, the same enforcement path as built-in tools. The runtime validates the grant, checks path scope, command rules, and output limits, then executes through host ports.
+- In **Act mode**, you can exclude specific MCP tools from being offered to the model ("Act mode MCP exclusions").
+- Concurrent server startup is capped by `mitii.mcp.maxConcurrentStartup` (default **4**).
+- Runtime status (ready / error / disabled) is shown in **Settings → Integrations** for diagnostics.
 
-- Tools exposed as `mcp__{server}__{tool}` (max 128 chars)
-- Concurrent startup limit: `thunder.mcp.maxConcurrentStartup` (default 4)
-- MCP tools pass through **ToolPolicyEngine** — same approvals as built-in tools
-- Status shown in **Settings → Integrations** (connected, tool count, errors)
-
-## OAuth / authentication
+## Authentication
 
 For remote servers:
 
-- Pass bearer token in `headers.Authorization`
-- Or set `oauth.accessToken` in server config (static token provider)
+- Pass a bearer token in `headers.Authorization`, **or**
+- Set `oauth.accessToken` in the server config (static token provider).
 
 Interactive OAuth browser flow is not yet exposed in the UI — use pre-issued tokens.
 
 ## Disabling MCP
 
-```json
-{
-  "thunder.mcp.enabled": false
-}
-```
-
-Or disable built-in preload only:
+Turn off everything:
 
 ```json
-{
-  "thunder.mcp.preloadBuiltin": false
-}
+{ "mitii.mcp.enabled": false }
 ```
+
+Or remove a single server from **Settings → Integrations → Installed servers**.
 
 ## Troubleshooting
 
-| Issue | Fix |
-|-------|-----|
-| Server won't start | Check `npx` is on PATH; read error in Integrations status |
-| Missing tools | Confirm server connected; check `toolCount` in status |
-| Remote 401 | Verify bearer token in headers |
-| Slow startup | Lower `maxConcurrentStartup` or disable unused servers |
+| Issue | What to check |
+|-------|---------------|
+| Server won't start | Is `npx` (or the binary) on PATH? Read the error in Integrations status. |
+| Tools not showing | Confirm the server is **ready** (not error/disabled) and check its tool count. |
+| Remote 401 / 403 | Verify the bearer token in `headers.Authorization`. |
+| Slow startup | Lower `maxConcurrentStartup` or disable servers you don't use. |
+| Tool blocked in Act mode | Check the Act-mode MCP exclusion list in settings. |
+
+## Where MCP lives in the codebase
+
+| Layer | Responsibility |
+|-------|----------------|
+| `apps/vscode` / `apps/cli` | Server lifecycle, settings UI, config merge, status display |
+| `@mitii/host` | Host ports the Tool Runtime uses to execute (filesystem, process, network) |
+| `@mitii/v8` (Tool Runtime + Decision Policy) | Grant validation, enforcement, audit, output sanitisation |
+
+This separation means MCP works identically in VS Code, the CLI, and any custom host built on `@mitii/sdk`.

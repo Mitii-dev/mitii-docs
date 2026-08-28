@@ -28,6 +28,8 @@ export default defineConfig({
       { text: 'Getting Started', link: '/getting-started/' },
       { text: 'Features', link: '/features/' },
       { text: 'Architecture', link: '/architecture' },
+      { text: 'CLI', link: '/cli/' },
+      { text: 'SDK', link: '/sdk/' },
       { text: 'Website', link: WEBSITE_URL },
       {
         text: 'Community',
@@ -52,8 +54,10 @@ export default defineConfig({
         text: 'Guide',
         items: [
           { text: 'Features', link: '/features/' },
-          { text: 'Configuration', link: '/configuration' },
           { text: 'Architecture', link: '/architecture' },
+          { text: 'Configuration', link: '/configuration' },
+          { text: 'CLI', link: '/cli/' },
+          { text: 'SDK', link: '/sdk/' },
           { text: 'Development', link: '/development' },
         ],
       },

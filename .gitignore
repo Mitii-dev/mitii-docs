@@ -3,3 +3,11 @@ docs/.vitepress/dist/
 docs/.vitepress/cache/
 .DS_Store
 .mitii
+
+# Mitii local runtime data
+.mitii/
+.mitii-session-export.json
+.mitii-audit-pack.json
+
+modules_explanation
+.vscode

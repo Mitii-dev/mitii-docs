@@ -1,25 +1,47 @@
 # Architecture
 
-Mitii is a VS Code extension with a local agent core — **no central server required**. All workspace intelligence lives in `.mitii/` on your machine.
+Mitii is a **host-neutral coding-agent runtime**. It works the same way whether you're using it from VS Code, a terminal, or a script.
 
-## System diagram
+```text
+Validated Input → Cohesive Pipeline → Validated Result
+```
+
+The core (`@mitii/v8`) is framework-agnostic. Hosts inject ports (filesystem, process, network) and render structured events. All workspace intelligence lives in `.mitii/` on your machine — **no central server, no cloud dependency**.
+
+## How it fits together
 
 ```mermaid
 flowchart TB
-  subgraph VSCode["VS Code"]
-    WV[React Webview UI]
-    TC[ThunderController]
-    WV <-->|postMessage| TC
+  subgraph Host["Host (VS Code / CLI / Daemon)"]
+    UI[UI / Terminal]
+    PORTS["Host Ports: FS, Process, Network, Git"]
+    UI <--> PORTS
   end
 
-  subgraph Core["Agent core"]
-    CO[ChatOrchestrator]
-    AL[AgentLoop]
-    PE[PlanExecutor]
-    TR[ToolRuntime]
-    TPE[ToolPolicyEngine]
-    AQ[ApprovalQueue]
-    TE[ToolExecutor]
+  subgraph SDK["@mitii/sdk"]
+    CLIENT[createMitiiClient]
+    START["client.start / resume"]
+    CLIENT --> START
+  end
+
+  subgraph V8["@mitii/v8 — Agent Runtime"]
+    INTAKE[Request Intake]
+    UNDERSTAND[Request Understanding]
+    DP[Decision Policy]
+    AE[Agent Engine]
+    REPO[Repository State]
+    CTX[Repository Context]
+    SKILLS[Skills]
+    MEM[Memory]
+    PLAN[Planning]
+    PROMPT[Prompt Construction]
+    MODEL[Model Gateway]
+    TR[Tool Runtime]
+    VERIFY[Verification]
+    CI[Change Impact]
+    CN[Code Navigation]
+    BUDGET[Window Budget]
+    TASK[Task List]
   end
 
   subgraph Data["Local data (.mitii/)"]
@@ -28,50 +50,80 @@ flowchart TB
     CP[checkpoints/]
   end
 
-  subgraph Context["Context pipeline"]
-    HR[HybridRetriever]
-    CB[ContextBudgeter]
-    RR[Reranker]
-  end
-
-  TC --> CO
-  CO --> HR --> RR --> CB
-  CO --> AL
-  CO --> PE
-  AL --> TE --> TPE --> AQ
-  TE --> TR
-  TC --> SQL
-  TC --> MCP[McpManager]
-  TC --> LLM[LlmProviderRegistry]
+  UI --> CLIENT
+  START --> INTAKE --> UNDERSTAND --> DP
+  DP -->|ExecutionDecision| AE
+  AE --> REPO --> CTX
+  AE --> SKILLS
+  AE --> MEM
+  AE --> PLAN
+  AE --> BUDGET
+  AE --> PROMPT --> MODEL
+  MODEL --> AE
+  AE --> TR
+  TR --> PORTS
+  AE --> VERIFY
+  AE --> CI
+  AE --> CN
+  AE --> TASK
+  TR --> SQL
+  AE --> LOGS
+  AE --> CP
 ```
 
-## Component responsibilities
+## What each module does
 
-| Component | Role |
-|-----------|------|
-| **ThunderController** | Central orchestrator — wires services, handles webview messages, workspace reload |
-| **ChatOrchestrator** | Turn pipeline: retrieve → prompt → plan or agent loop → verify |
-| **AgentLoop** | LLM ↔ tool round-trip in Agent mode |
-| **PlanExecutor** | Multi-step planner in Plan mode |
-| **HybridRetriever** | Merges FTS, vectors, rules, git, diagnostics, memory |
-| **ContextBudgeter** | Fits context into model token window |
-| **ToolPolicyEngine** | allow / require_approval / block per tool |
-| **ApprovalQueue** | Pending human approvals |
-| **CheckpointService** | Git-stash or file-copy snapshots |
-| **MemoryService** | Long-term observations store |
-| **McpManager** | Stdio / SSE / HTTP MCP connections |
-| **LlmProviderRegistry** | Resolves provider by type and mode |
+| Module | What it does |
+|--------|-------------|
+| **Request Intake** | Validates your input, normalizes attachments and conversation metadata into a clean request envelope |
+| **Request Understanding** | Figures out what you actually want — intent, targets, constraints, scope, risk, and whether clarification is needed |
+| **Decision Policy** | The authority module. Converts understanding into one `ExecutionDecision`: which route to take, how deep to plan, what tools are allowed, and what needs approval |
+| **Agent Engine** | The orchestrator. Sequences every stage of a run, manages the model/tool loop, handles suspension/resume, checkpoints, and emits structured events |
+| **Repository State** | Builds and maintains the single authoritative index of your codebase — discovery, ignore rules, project catalog, FTS, vectors, symbols, and the dependency graph |
+| **Repository Context** | Retrieves the most relevant code for a query within a token budget — hybrid search, deduplication, diversity selection, and safe assembly |
+| **Skills** | Selects and budgets instruction blocks (SKILL.md files) that guide the agent's behavior for the current task |
+| **Memory** | Durable facts scoped to user / workspace / project. Supplies prior preferences and decisions to prompt construction |
+| **Planning** | Drafts a dimension-driven plan (scope, risk, complexity) when the decision calls for it. Validates, compacts, and serializes the result |
+| **Task List** | Maintains a compact working checklist (max 8 items) derived from the plan. Tracks progress without stamping items done prematurely |
+| **Prompt Construction** | Assembles the final model prompt from context, memory, skills, task context, and the window budget — with provenance and an omission report |
+| **Window Budget** | Computes the usable input/output split from the model's context window, reserving space for output, mutations, planning, skills, and compaction |
+| **Model Gateway** | Provider-agnostic LLM streaming (Anthropic, OpenAI, Gemini, OpenAI-compatible). Handles capability negotiation, usage tracking, and retry classification |
+| **Tool Runtime** | The enforcement layer. Validates every tool call against the `ToolGrant`, executes via host ports, sanitizes output, enforces timeouts, and supports mutation rollback |
+| **Verification** | Runs applicable checks (lint, typecheck, tests) after changes. Only Verification can authorize `verified_success` — the model cannot self-certify |
+| **Change Impact** | Blast-radius estimation. Walks the repository graph from a file, symbol, or caret to find affected callers, importers, and package dependents |
+| **Code Navigation** | Read-only source navigation — resolves definitions, references, and hover info via language server or repository graph |
 
-## Request lifecycle
+## A run, step by step
 
-1. User sends message in sidebar webview
-2. **ThunderSession** mode (`ask` | `plan` | `agent` | `review`) selects tool policy
-3. **HybridRetriever** gathers context from tiered sources (parallel, 800ms timeout each)
-4. **Reranker** trims candidates; **ContextBudgeter** allocates token budget
-5. **TaskAnalyzer** decides planner vs direct agent path
-6. **resolveProviderForMode** picks plan or act model if configured
-7. **AgentLoop** streams LLM → tool calls → policy → approval → execute → repeat
-8. Results persisted: turns, plans, checkpoints, memory, JSONL logs
+1. **You send a prompt** (sidebar, terminal, or SDK `client.start()`)
+2. **Request Intake** validates and normalizes it
+3. **Request Understanding** extracts intent, scope, risk, and clarity
+4. **Decision Policy** emits the `ExecutionDecision` — route, plan depth, tool grants, approval gates
+5. **Agent Engine** pins repository state and coordinates the run
+6. **Repository State** + **Repository Context** provide indexed, budgeted code context
+7. **Skills**, **Memory**, and **Planning** contribute instructions and durable facts
+8. **Window Budget** computes the token split; **Prompt Construction** assembles the final prompt
+9. **Model Gateway** streams the response; tool calls route to **Tool Runtime**
+10. **Tool Runtime** validates, executes, and returns bounded results
+11. **Agent Engine** enforces budgets, persists checkpoints at gates, and emits `RunEvent`s
+12. **Verification** runs checks and produces the final result state
+
+### Run states
+
+```text
+Active:     received → understood → decided → context_ready → model_running ⇄ tool_running → verifying
+Suspended:  clarification_required | approval_required
+Terminal:   completed | approval_denied | cancelled | budget_exhausted | failed
+```
+
+## What V8 deliberately does NOT do
+
+- Treat the model as an authority for permissions or completion
+- Create one module per class, algorithm, or provider
+- Put business logic in host wiring (VS Code, CLI, webview)
+- Assume one language, package manager, or IDE
+- Run all tests or load all context for every request
+- Introduce multi-agent orchestration before one agent is reliable
 
 ## Data storage (`.mitii/`)
 
@@ -88,19 +140,58 @@ flowchart TB
 
 Legacy `.thunder/` paths are ignored for backward compatibility. **Nothing is sent to a Mitii server** — there isn't one.
 
-## Source layout
+## Package layout
 
-| Directory | Role |
-|-----------|------|
-| `src/extension.ts` | VS Code activation entry |
-| `src/core/` | Agent loop, indexing, retrieval, tools, safety, MCP, memory |
-| `src/core/llm/` | Provider implementations (OpenAI, Anthropic, Gemini, etc.) |
-| `src/core/agent/` | AgentLoop, PlanExecutor, ResearchAgent, compaction |
-| `src/core/indexing/` | SQLite, FTS5, tree-sitter, vectors |
-| `src/core/context/` | HybridRetriever, budgeter, repo map, sources |
-| `src/vscode/` | Commands, webview provider, inline diff, diff preview |
-| `src/webview-ui/` | React sidebar (Vite build → `dist/webview/`) |
-| `src/shared/` | Brand constants |
+| Package | Role |
+|---------|------|
+| `packages/v8/` (`@mitii/v8`) | Core agent runtime — all 17 modules above |
+| `packages/sdk/` (`@mitii/sdk`) | Host-neutral programmatic API — `createMitiiClient()`, `client.start()`, `client.resume()`, `run.events`, `run.result` |
+| `packages/host/` (`@mitii/host`) | Host adapters — filesystem checkpoints, skills catalog, search, indexing, bundled embeddings |
+| `apps/vscode/` | VS Code extension — sidebar webview, inline diff, diff preview, commands, settings UI |
+| `apps/cli/` | Terminal agent — interactive and non-interactive modes |
+| `apps/daemon/` | Background daemon — long-running indexing, session management, MCP server hosting |
+
+Dependency direction: **`apps → sdk → v8`**. V8 never imports host or SDK packages.
+
+## Source layout (V8 core)
+
+All modules live under `packages/v8/src/modules/`:
+
+```text
+packages/v8/src/
+├── modules/
+│   ├── request-intake/
+│   ├── request-understanding/
+│   ├── repository-state/
+│   ├── repository-context/
+│   ├── decision-policy/
+│   ├── prompt-construction/
+│   ├── model-gateway/
+│   ├── tool-runtime/
+│   ├── verification/
+│   ├── agent-engine/
+│   ├── skills/
+│   ├── memory/
+│   ├── planning/
+│   ├── task-list/
+│   ├── code-navigation/
+│   ├── change-impact/
+│   └── window-budget/
+├── engine/
+│   ├── agent-engine/      (runtime orchestration)
+│   └── tool-runtime/      (tool execution)
+└── contracts/             (shared types across modules)
+```
+
+Each module follows a consistent internal shape:
+
+```text
+modules/<name>/
+├── contracts/       (input, output, error, port schemas)
+├── pipeline/        (public orchestration)
+├── actions/         (meaningful pipeline steps)
+└── internal/        (private implementation)
+```
 
 ## Webview UI
 
@@ -111,14 +202,14 @@ React app with:
 - Context debugger, memory browser, checkpoint browser
 - Token meter, indexing status, context warnings
 
-Communicates via typed `postMessage` protocol (`messages.ts`).
+Communicates via typed `postMessage` protocol.
 
 ## LLM providers
 
-`LlmProviderRegistry` resolves from `thunder.provider.type`:
+Configured via `mitii.provider.type`:
 
-- Native: **Anthropic** (Messages API), **Gemini** (GenerateContent API)
-- OpenAI-compatible: OpenAI, DeepSeek, Cursor, Codex, Ollama, vLLM
+- **Native**: Anthropic (Messages API), Gemini (GenerateContent API)
+- **OpenAI-compatible**: OpenAI, DeepSeek, Cursor, Codex, Ollama, vLLM
 - **Echo** stub for testing
 
 Optional plan/act model overrides per mode.
@@ -135,9 +226,9 @@ McpManager
 
 ## Safety layer
 
-Every tool call: `ToolExecutor` → `ToolPolicyEngine` → `ApprovalQueue` (if needed) → execute.
+Every tool call goes through **Tool Runtime**: validate against `ToolGrant` → execute via host ports → return bounded `ToolResult`.
 
-Autonomy presets and approval modes compose to control writes, shell, and network.
+Autonomy presets and approval modes compose to control writes, shell, and network. Only **Verification** can declare success — the model proposes, Verification disposes.
 
 ## Build pipeline
 

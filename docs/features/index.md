@@ -1,124 +1,179 @@
 # Features
 
-Mitii combines **deep workspace indexing** with a **safe Plan/Act agent workflow** — local-first, approval-gated, and auditable.
+Mitii is a **local-first, approval-gated, auditable** coding-agent runtime. It indexes your entire workspace, plans before it acts, and keeps every operation under your control — without sending code to a vendor server.
 
-::: tip New in v2.6
-Context debugger, memory browser, checkpoint panel, 8 LLM providers, plan/act model split, MCP HTTP/SSE, git-stash checkpoints, inline diff accept/reject, **Cursor-style Planner UI**, and **planning skills auto-load**. See [Recent improvements](/implementation/recent-improvements).
-:::
+---
 
-## Why Mitii?
+## Deep Workspace Indexing
 
-[What makes Mitii different →](/why-mitii)
+Mitii builds a multi-layer index of your repository before any agent interaction:
 
-## Context and indexing
+| Layer | What it provides |
+|-------|-----------------|
+| **FTS5** | Fast full-text keyword search across all indexed files |
+| **Tree-sitter** | Symbol extraction (functions, classes, imports) across 100+ languages |
+| **Repo map** | PageRank over import/export edges — surfaces structurally important files |
+| **Vectors** | On-device MiniLM embeddings (384-d, L2-normalized) for semantic similarity search |
+| **Git + LSP** | Uncommitted diffs and live diagnostics injected into context |
+| **Project rules** | Auto-loads `AGENTS.md`, `.cursor/rules`, `.clinerules`, `.mitii/rules` |
 
-- **Workspace scanner** respects `.gitignore` and `.mitiiignore`; auto-indexes on folder open
-- **FTS5 full-text search** with ripgrep fallback for unindexed paths
-- **Tree-sitter WASM** symbol extraction (100+ languages) with regex fallback
-- **PageRank repo map** — surfaces structurally important files
-- **Vector search** — local MiniLM via `@xenova/transformers`; SQLite or LanceDB backend
-- **Hybrid retriever + reranker** — merges search, vectors, rules, mentions, git, LSP, memory
-- **Context debugger** — live budget meters, source breakdown, dropped-item visibility
-- **Pinned `@` context** — explicit file/folder mentions always considered
+A **hybrid retriever** merges all sources, a **reranker** trims noise, and a **context budget** fits the result into your model window. The **context debugger** in the sidebar shows exactly what was included, truncated, or dropped.
 
-[Deep dive: Context & indexing →](/implementation/context-indexing)
+All indexing and embedding runs **on your machine** — no API calls, no network round-trips.
 
-## Agent workflow
+---
 
-- **Ask / Plan / Agent / Review modes** — separate analysis from execution
-- **Plan vs Act models** — optional cheaper planner, stronger implementer
-- **Tool loop** — 20+ built-in tools + dynamic MCP tools
-- **Research subagents** — `spawn_research_agent` for parallel read-only exploration
-- **Task decomposition** — multi-step plans with lifecycle tracking and persistence
-- **Cursor-style Planner panel** — phased steps, requirement analysis, skill chips, expandable step details in Plan mode
-- **Planning skills** — auto-loads `planning-and-task-breakdown` and related playbooks during orchestrated planning
-- **Post-edit verification** — configurable lint/test after Act-mode runs
-- **Skills catalog** — `.mitii/skills/SKILL.md` invoked via `use_skill` and auto-injected during planning
-- **Auto-continue** — agent keeps working across step-limit boundaries
-- **Conversation compaction** — long sessions trimmed intelligently
+## Agent Workflow (Plan / Act)
 
-[Deep dive: Plan / Act →](/implementation/plan-act)
+Mitii separates **thinking** from **doing** with explicit modes:
 
-## Safety and control
+| Mode | Writes | Shell | Purpose |
+|------|--------|-------|---------|
+| **Ask** | Blocked | Read-only | Q&A, exploration, explanation |
+| **Plan** | Blocked | Read-only | Structured plans, audits, impact analysis |
+| **Agent** | With approval | With approval | Implementation with per-step gates |
+| **Review** | Blocked | Read-only | Code review and quality checks |
 
-- **Five autonomy presets** — safe, guided, builder, pilot, enterprise (distinct behavior)
-- **Five approval modes** — review_all, ask_edits, ask_deletes, ask_commands, auto
-- **Dangerous command blocking** — rm -rf, sudo, force-push, etc.
-- **Untrusted workspace blocking** — writes/shell disabled unless opted in
-- **Git-stash checkpoints** — restore from Checkpoints panel
-- **Inline diff** — accept/reject in editor; optional VS Code diff tabs
-- **Approval cards** — approve once, approve for task, or deny
+### Agent tools
 
-[Deep dive: Safety →](/implementation/safety)
+| Tool | Purpose |
+|------|---------|
+| `ask_question` | Clarify ambiguous requests before acting |
+| `propose_plan_mutation` | Propose changes to the current plan mid-run |
+| `propose_file_scope` | Declare candidate file paths before reading or editing (default Act contract) |
+| `mark_step_complete` | Signal step completion for progress tracking |
 
-## Memory and persistence
+---
 
-- **Long-term memory** — `memory_search` / `memory_write` with FTS5 + vector hybrid
-- **Memory panel** — browse and clear observations in sidebar
-- **Post-task extraction** — async summarization after completed work
-- **Session history** — resume from History tab
-- **Plan persistence** — SQLite + `.mitii/tasks/`
-- **JSONL audit logs** — every tool, approval, token event in `.mitii/logs/`
+## Safety & Control
 
-[Deep dive: Memory & checkpoints →](/implementation/memory-checkpoints)
+Two cooperating layers gate every risky operation:
 
-## LLM providers
+| Layer | Role |
+|-------|------|
+| **Decision Policy** | Decides *what* is allowed: execution route, planning depth, tool grant, verification requirements, prompt-injection scan |
+| **Tool Runtime** | Enforces the grant: validates tool name, effect, path scope, command rules, network hosts, output limits, mutation batch limits |
 
-Eight provider types: OpenAI-compatible, OpenAI, Anthropic, Gemini, DeepSeek, Cursor, Codex, Echo.
+### ToolGrant dimensions
 
-- Native Anthropic Messages API and Gemini GenerateContent API
-- Local Ollama/vLLM via OpenAI-compatible endpoint
-- API keys in VS Code SecretStorage
-- Connection test in settings UI
+| Dimension | Controls |
+|-----------|----------|
+| `maximumWorkspaceEffect` | Read-only → write → execute |
+| `allowedTools` | Which tools the model may request |
+| `pathScopes` | Filesystem paths the agent may touch |
+| `commandRules` | Shell command allow/deny patterns |
+| `networkHosts` | Per-endpoint network access |
+| `limits` | Output size, batch size, timeout |
+| `mutationBudget` | Max file mutations per run |
+| `approvalMode` | `when_required` or `always` |
 
-[Deep dive: Providers →](/implementation/providers)
+### Additional safety features
 
-## MCP and integrations
+- **Prompt-injection defense** — Decision Policy scans for injection signals and clamps the ToolGrant before Tool Runtime sees the call
+- **Verification requirements** — agent must produce evidence (test output, typecheck, lint) before claiming success
+- **Mutation rollback** — Tool Runtime can revert a batch of file changes on failure
+- **Audit trail** — every tool call, approval, and rejection is logged (SQLite + JSONL)
+- **MCP Act-mode exclusions** — MCP tools are excluded from Agent mode by default
 
-- **Built-in servers** — filesystem, memory, sequential-thinking (keyless via npx)
-- **Transports** — stdio, HTTP SSE, Streamable HTTP
-- **Remote auth** — bearer tokens in headers
-- **Workspace config** — `.mitii/mcp.json`, `.mcp.json`, VS Code settings
-- **Integrations UI** — toggle builtins, add custom servers, view status
+---
 
-[Deep dive: MCP →](/implementation/mcp)
+## Code Intelligence
 
-## Web fetch
+| Capability | Description |
+|------------|-------------|
+| **Code Navigation** | Resolve definitions, references, and hover info via injected `CodeNavigationPort` |
+| **Change Impact** | Walk the repository graph from a file/symbol/caret seed to estimate blast radius (affected files, packages, truncation signals) |
+| **Repo Graph** | Dependency and dependent edges across files, symbols, and packages |
 
-- **`fetch_web` tool** — HTTP fetch for external docs and API references
-- HTML stripped to plain text; network gated by safety preset
+---
 
-## UI
+## Memory & Context
 
-React sidebar webview:
+- **Hybrid retrieval** — FTS5 keyword + vector semantic search merged and reranked
+- **Access-based retention** — frequently accessed memories are retained longer
+- **Privacy redaction** — hash reinforcement + Jaccard supersede to prevent sensitive data leakage
+- **Checkpoints** — filesystem snapshots for safe rollback of agent changes
+- **Session logs** — JSONL audit trail of every tool call and approval
 
-- Chat with streaming, Shiki code blocks, markdown
-- History, Settings (7 tabs)
-- Plan panel, approval cards, agent activity
-- Context debugger, memory browser, checkpoint browser
-- Pinned context, token meter, indexing status
-- Context warning banner when budget is tight
+---
 
-## Project rules
+## Skills System
 
-Auto-loaded from repo:
+Mitii ships **12 bundled skills** that shape agent behavior:
 
-- `AGENTS.md`, `CLAUDE.md`, `WARP.md`, `.cursorrules`
-- `.mitii/rules`, `.clinerules`, `.cursor/rules`, `.continue/rules`
+| Skill | Focus |
+|-------|-------|
+| `safety-always` | Safety guardrails on every run |
+| `ask-concise` | Concise, direct answers |
+| `bugfix-localize` | Localize bugs before fixing |
+| `planning-default` | Structured planning before action |
+| `planning-and-task-breakdown` | Decompose specs into atomic tasks |
+| `code-review-and-quality` | Review and quality checks |
+| `debugging-and-error-recovery` | Systematic debugging |
+| `git-workflow-and-versioning` | Atomic commits, clear history |
+| `incremental-implementation` | Small, verifiable changes |
+| `security-and-hardening` | OWASP-class risk hardening |
+| `spec-driven-development` | Spec-first implementation |
+| `test-driven-development` | TDD workflow |
 
-## How Mitii compares
+Custom skills can be dropped into `.mitii/skills/` to override or extend bundled behavior.
 
-| Pain point | What Mitii does |
-|------------|------------------|
-| Agent doesn't know the codebase | Background index: FTS, symbols, vectors, repo map |
-| Wrong files in context | Hybrid retrieval + reranker + context debugger |
-| Edits without oversight | Approval queue + inline diff + checkpoints |
-| Plans that never get executed | Plan mode persists steps; Agent mode runs tool loop |
-| Context runs out mid-task | Compaction, auto-continue, task state across approvals |
-| No audit trail | JSONL session logs + approval audit table |
-| Locked into one vendor | 8 provider types + MCP + project rules from any editor |
-| Opaque safety | Named presets + approval modes + policy engine |
+---
 
-## Tool reference
+## Provider Support
 
-[Full built-in tool catalog →](/implementation/tools)
+Mitii is **LLM-agnostic** via the `LlmPort` injection pattern:
+
+| Provider | Notes |
+|----------|-------|
+| Anthropic (Claude) | `ANTHROPIC_API_KEY` |
+| Google (Gemini) | `GEMINI_API_KEY` |
+| OpenAI | `OPENAI_API_KEY` |
+| DeepSeek | OpenAI-compatible endpoint |
+| Ollama / LM Studio | Local, no key required |
+| Any OpenAI-compatible | Custom base URL |
+
+- **Token budget** — context window drives derived budgets for input/output
+- **Profiles** — `.mitii/profiles.json` for per-project provider/model presets
+- **Secrets stay on the port** — the SDK and V8 never see API keys
+
+---
+
+## MCP (Model Context Protocol)
+
+- **Off by default** (`mitii.mcp.enabled`)
+- **Built-in catalog** — install MCP servers from Settings → Integrations
+- **Act-mode exclusions** — MCP tools are excluded from Agent mode for safety
+- Same approval policy as built-in tools when enabled
+
+---
+
+## Multi-Surface
+
+The same agent core powers three surfaces:
+
+| Surface | Package | Use case |
+|---------|---------|----------|
+| **VS Code Extension** | `apps/vscode` | IDE-integrated agent with sidebar UI, context debugger, approval queue |
+| **CLI** | `@mitii/cli` | Headless terminal agent for CI, scripts, and remote workflows |
+| **SDK** | `@mitii/sdk` | Host-neutral programmatic API for embedding Mitii in custom apps |
+
+All three share the same `@mitii/v8` engine, `@mitii/host` kit, and safety model.
+
+---
+
+## Architecture
+
+```text
+Validated Input → Cohesive Pipeline → Validated Result
+```
+
+| Package | Responsibility |
+|---------|---------------|
+| `@mitii/v8` | Agent engine, decision policy, tool runtime, code navigation, change impact |
+| `@mitii/sdk` | Public host-neutral API (createMitiiClient, run lifecycle, LlmPort injection) |
+| `@mitii/host` | Shared host kit: indexing, bundled embedding, checkpoints, memory, skills catalog |
+| `@mitii/cli` | Headless CLI over SDK |
+| `apps/vscode` | VS Code extension (F5 target, Marketplace: `mitii.mitii-ai-agent`) |
+
+**Forbidden edges:** `host → apps`, `sdk → host`, `v8 → host`.
