@@ -1,0 +1,249 @@
+# VS Code Extension — Settings
+
+Settings live in the Mitii sidebar webview. The left rail is **icons only** when the panel is narrow (≤440px). Hover or focus an icon to see its name in a tooltip. When the panel is wider, the rail shows **icons + labels**.
+
+Click **Save** to persist. Edits stay local until Save, except API key prompts and profile switch, which talk to the host immediately.
+
+VS Code configuration keys use the `mitii.*` prefix. Profiles are stored in `.mitii/profiles.json`. API keys stay in VS Code SecretStorage.
+
+## Pages
+
+| Page | Tab id | What it is for |
+|---|---|---|
+| Provider | `model` | Connect a model. Open this first. |
+| Autocomplete | `autocomplete` | Configure FIM inline suggestions |
+| Workspace | `workspace` | Folder + repository index |
+| Modes | `modes` | Ask / Plan / Agent defaults and run budget |
+| Context | `context` | What is attached to each turn |
+| MCP | `integrations` | Optional MCP servers |
+| Developer | `debug` | Logging, token-budget tunables, diagnostics |
+
+The index status chip opens **Workspace**. Onboarding and "open settings" open **Provider**.
+
+## Provider
+
+Required setup. Connection and credentials are at the top so you do not scroll past the index to find them.
+
+### Connection
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Provider | `mitii.provider.preset` + `mitii.provider.type` | Saved preset prefills base URL and model. After Save, the same preset is shown. Includes **Ollama Cloud** (`https://ollama.com/v1`). |
+| Base URL | `mitii.provider.baseUrl` | Saved as typed. Local hosts do not need a key. |
+| Model | `mitii.provider.model` | Dropdown or Custom. Saved model id is reflected exactly. |
+
+### Credentials
+
+| UI field | Storage | Save / reflect |
+|---|---|---|
+| Set key / Clear | SecretStorage `mitii.provider.apiKey` | Never written to settings JSON. Status shows `configured` or `not set`. |
+| Test connection | Host probe | Status pill + model list only. Does **not** persist settings or reset unsaved drafts. |
+
+Anthropic and Gemini require a key. Echo and local OpenAI-compatible hosts usually do not.
+
+### Web search (optional)
+
+External / product / docs asks grant the `web_search` tool when at least one search provider is configured via `@mitii/search-kit` (wired through `@mitii/host`). Explicit phrases like "search the web for …" or "check vulnerabilities online …" also grant it (including security/dependency intents). Local-only security fixes (e.g. "fix XSS in this file") stay offline.
+
+| UI field / env | Storage | Notes |
+|---|---|---|
+| SearXNG base URL | `mitii.search.searxngBaseUrl` | Preferred free path (e.g. `http://127.0.0.1:8080`). Wins over env. **Save** settings after editing; pasting the URL in chat does not configure search. |
+| Set web search key / Clear | SecretStorage `mitii.search.apiKey` | Optional Brave key. Command palette: **Mitii: Set Web Search API Key**. |
+| `BRAVE_API_KEY` / `MITII_SEARCH_API_KEY` | Environment | Same Brave key if SecretStorage is empty. |
+| `SEARXNG_BASE_URL` / `MITII_SEARXNG_URL` | Environment | Self-hosted SearXNG when the setting is empty. |
+| `TAVILY_API_KEY` | Environment | Optional Tavily fallback. |
+| `MITII_SEARCH_PROVIDERS` | Environment | Optional order, e.g. `searxng,brave,tavily`. |
+
+Default order when unset: SearXNG (if URL) → Brave (if key) → Tavily (if key).
+
+Use the **base URL only** (no `/search` path). The instance must allow JSON (`/search?format=json`). CLI config uses the same providers — see [CLI Setup](/using/CLI/setup#web-search-searxng).
+
+`fetch_url` / `fetch_docs` use a content-aware `NetworkPort`: Stack Overflow answers, GitHub issue threads, Wikipedia, arXiv abstracts, then HTML readability. After `web_search`, result hosts are widened into the grant so the agent can fetch top hits.
+
+Without any provider, Mitii completes the turn from model knowledge and logs that SearchPort is not configured.
+
+### Token limits
+
+The context window is the only token setting a customer needs. Retrieval, compaction, mutation batches, verification checks, and the derived model-call cap scale from that window. Developer → Token budget is optional.
+
+**Source of truth:** a positive `mitii.provider.contextWindow` always wins for budgeting, compact/standard/wide bands, and loop-history compaction ceilings. `0` means auto (model preset → provider/model heuristic → 32 768 fallback).
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Context window | `mitii.provider.contextWindow` | Type freely, then click **Save**. The field does not write on each keystroke. After Save, the raw number is what you see. `0` means "use the model preset". |
+| Max output | `mitii.provider.maximumOutputTokens` | Same commit rules as context window. `0` derives the output reserve from the window (~20%, floored so a 30k local cap can still finish a mutation batch). Leave at `0` unless you need a hard override. A positive value is a host override for generation; the legacy default `5000` is ignored. |
+| Derived budget | Live preview | Usable input, output reserve, model-call cap, files per mutation, verification checks, and a module-share bar. Updates as soon as the context window or max output changes. |
+| Reset budgets to defaults | Clears `mitii.tokenBudget.*` | Turns off custom token-budget overrides and restores built-in ratios for the current window. |
+
+Runtime still uses the **effective** window (`0` → model preset, else the stored number). The token meter uses that effective value, not `0`.
+
+## Autocomplete
+
+Optional editor inline suggestions. Autocomplete is separate from Ask/Plan/Agent so you can use a fast FIM model without changing the main agent provider.
+
+Mitii registers a VS Code inline completion provider at startup, but it sends no network requests unless `mitii.autocomplete.enabled` is true. Requests are file-only, workspace-trust aware, bounded by prefix/suffix character limits, skipped for ignored/security-sensitive paths, debounced, and aborted on typing or timeout.
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Enable autocomplete | `mitii.autocomplete.enabled` | Saved on Save or via **Mitii: Toggle Autocomplete**. |
+| Provider | `mitii.autocomplete.provider` | Currently `openai-compatible`. |
+| Base URL | `mitii.autocomplete.baseUrl` | Empty inherits `mitii.provider.baseUrl`. |
+| Model | `mitii.autocomplete.model` | Empty inherits `mitii.provider.model`. |
+| Endpoint path | `mitii.autocomplete.endpointPath` | Appended to the base URL. Common values are `completions` and `fim/completions`. |
+| Auth header | `mitii.autocomplete.authHeader` | Uses SecretStorage `mitii.provider.apiKey` as `authorization`, `api-key`, or `x-api-key`. |
+| Max tokens | `mitii.autocomplete.maxTokens` | Clamped to 1–512. |
+| Debounce | `mitii.autocomplete.debounceMs` | Clamped to 0–2000ms. |
+| Timeout | `mitii.autocomplete.timeoutMs` | Clamped to 250–30000ms. |
+| Prefix chars | `mitii.autocomplete.prefixChars` | Clamped to 128–60000 characters before the cursor. |
+| Suffix chars | `mitii.autocomplete.suffixChars` | Clamped to 0–60000 characters after the cursor. |
+| Temperature | `mitii.autocomplete.temperature` | Clamped to 0–2. |
+
+The HTTP body follows the generic OpenAI-style FIM shape:
+
+```json
+{
+  "model": "your-fim-model",
+  "prompt": "text before cursor",
+  "suffix": "text after cursor",
+  "max_tokens": 96,
+  "temperature": 0.2,
+  "stream": false
+}
+```
+
+## Workspace
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Folder path | Workspace folder | Read-only display of the active root. |
+| Open folder | VS Code folder picker | Immediate. |
+| Root path override | `mitii.workspace.rootPathOverride` | Saved on Save. Clear override writes empty/null and reflects no override. |
+| Reindex / Refresh | Index pipeline | Immediate. Not a setting. |
+| Index stats / capabilities | Index snapshot | Read-only diagnostics. |
+
+## Modes
+
+### Mode defaults (Ask / Plan / Agent)
+
+Each mode has its own row. Switching the Ask / Plan / Agent control edits that mode only.
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Approval mode | `mitii.ui.modeDefaults.<mode>.approvalMode` | `safe` (ask) / `guided` (approve for me) / `pilot` (full access). Composer changes also update the active mode default and `mitii.safety.approvalMode` immediately so Save cannot restore Agent's default `safe`. |
+| Default model | `mitii.ui.modeDefaults.<mode>.model` | Empty = use the active Provider model. |
+| Show reasoning stream | `mitii.ui.showReasoning` | Global, not per mode. |
+| Reasoning preview chars | `mitii.ui.reasoningPreviewMaxChars` | 500–50000. Reflected as the saved integer. |
+
+Thoroughness stays on the **composer** (not duplicated here). Ship loop / window defaults: `pnpm policy-admin`.
+
+### Run budget
+
+Caps for a single Mitii turn.
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Unlimited run budget | `mitii.runBudget.unlimited` | When on, the four caps are ignored at runtime. |
+| Model calls | `mitii.runBudget.maxModelCalls` | Minimum 1. |
+| Tool calls | `mitii.runBudget.maxToolCalls` | Minimum 1. |
+| Loop iterations | `mitii.runBudget.maxLoopIterations` | Minimum 1. |
+| Wall time (min) | `mitii.runBudget.maxWallTimeMinutes` | Minimum 1. |
+
+These caps are owned here. You do not need to retune them when the context window changes. Developer → Token budget does not override them.
+
+### Log verbosity
+
+Controls how much diagnostic detail lands in the run log (visible via "Export session log" / "Open session log").
+
+| UI field | Setting | Notes |
+|---|---|---|
+| Log verbosity | `mitii.logVerbosity` | `minimal` (baseline events only), `standard` (adds reason codes and before/after values for clamps and soft failures), `verbose` (default; adds retry/nudge-level detail). Turn this down if exported logs are too noisy — it does not change what the agent does, only what it records. |
+
+## Context
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Repo map | `mitii.ui.contextToggles.repoMap` | Boolean. Default off; auto-enabled for deep / CI-git impact asks. |
+| Diagnostics | `mitii.ui.contextToggles.diagnostics` | Boolean. |
+| Git diff | `mitii.ui.contextToggles.gitDiff` | Boolean. Default off; auto-enabled for deep / CI-git impact asks. |
+| Active editor | `mitii.ui.contextToggles.editor` | Boolean. |
+| Open tabs | `mitii.ui.contextToggles.openTabs` | Boolean. Default off. |
+| Memory | `mitii.ui.contextToggles.memory` | Boolean. Default on. |
+| Memory list | Workspace memory store | Add / delete / clear are immediate host calls. |
+| Checkpoints | Checkpoint store | Restore / delete / clear are immediate host calls. |
+
+## MCP
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Enable MCP | `mitii.mcp.enabled` (and/or `.mitii/mcp.json`) | Master switch. Off by default. |
+| Installed servers | `mitii.mcp.servers` | Enable, configure, or delete per server. Saved on Save. |
+| Store catalog | Built-in catalog | Install copies a server into the workspace list. |
+
+Runtime status (ready / error / disabled) is diagnostic only.
+
+## Developer
+
+Keep this minimal. Permanent ship policy lives in `pnpm policy-admin`.
+
+### Access
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Enable developer settings | `mitii.developer.enabled` | Unlocks Logging and local Custom token / loop editors. |
+
+### Logging
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Debug logging | `mitii.debug` | When on, Mitii shows the Output channel and prints verbose stacks. Locked until Access is enabled. |
+| Log model I/O | `mitii.developer.modelIo` | When on (and Access enabled), writes sanitized model request/response bodies to `.mitii/logs/*-model-io.jsonl`. Large; may include workspace content — keep local. Command **Mitii: Export Shareable Diagnostic** builds one redacted markdown file under `.mitii/logs/` for pasting into online chat help. |
+
+### Token budget (local)
+
+Optional local overrides for this machine. Module shares are of usable input and **need not total 100%** — leftover shows as **Free** in the allocation bar.
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Custom token budget | `mitii.tokenBudget.enabled` | Turns on when you move a Simple slider. When off, V8 defaults scale from the window. |
+| Simple: files / output / shares / verification | `mitii.tokenBudget.*` | Local sliders only. Ship defaults: `pnpm policy-admin`. |
+| Module split | Live preview | Stacked bar of output, tools, repository, conversation, plan, skills, and **Free**. |
+| Reset budgets to defaults | Clears `mitii.tokenBudget.*` | Restores window-scaled defaults. |
+
+### Loop / stall (local)
+
+| UI field | Setting | Save / reflect |
+|---|---|---|
+| Active band (read-only) | Derived from provider context window | Compact / standard / wide. |
+| Custom loop policy | `mitii.loopPolicy.enabled` | Local lab deltas on the active band. |
+| Simple fields | `mitii.loopPolicy.*` | Shown only while Custom is on. |
+| Reset to ship band | Clears `mitii.loopPolicy.*` | Restores shipped band for the current window. |
+
+### Ship policy (HTML, not in VS Code)
+
+```bash
+pnpm policy-admin
+```
+
+Edits `loopPolicyBands.ts` + `windowBudgetBands.ts`. See `tools/policy-admin/README.md`.
+
+### Diagnostics
+
+Read-only: provider connection, MCP runtime, index token, index mode, preset label, active policy band. Use **View → Output → Mitii** for logs.
+
+## Profiles and Save
+
+The footer is always visible.
+
+| Control | Behavior |
+|---|---|
+| Profile select | Switches `.mitii/profiles.json` immediately and reloads provider fields. |
+| New | Creates a profile from the current provider snapshot. |
+| Save | Writes provider, UI, MCP, workspace override, and the active profile. Then the host bootstraps the webview so every field **reflects the stored value**. |
+
+### Reflection rules
+
+1. **Raw fields** (almost everything) show exactly what was saved.
+2. **Context window `0`** stays `0` in the field. Runtime and the hint use the effective preset window.
+3. **Max output `0`** stays `0` in the field. Runtime derives the reserve.
+4. **Secrets** never echo back as text — only configured / not set.
+5. **Invalid numbers** clamp to the field minimum on Save (token limits cannot go below 0; run-budget caps cannot go below 1).

@@ -1,14 +1,46 @@
-/* Monochrome black & white theme */
-:root {
-  --vp-c-brand-1: #ffffff;
-  --vp-c-brand-2: #d4d4d4;
-  --vp-c-brand-3: #a3a3a3;
-  --vp-c-brand-soft: rgba(255, 255, 255, 0.08);
-  --vp-home-hero-name-color: #ffffff;
-  --vp-home-hero-name-background: none;
-  --vp-home-hero-image-filter: none;
+/* ─── Slim Sidebar Scrollbar ─── */
+.VPSidebar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--vp-c-divider) transparent;
 }
 
+.VPSidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.VPSidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.VPSidebar::-webkit-scrollbar-thumb {
+  background: var(--vp-c-divider);
+  border-radius: 2px;
+}
+
+.VPSidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--vp-c-text-3);
+}
+
+/* ─── Monochrome Theme — Light Mode ─── */
+:root {
+  --vp-nav-breakpoint: 768px;
+  --vp-c-brand-1: #181818;
+  --vp-c-brand-2: #404040;
+  --vp-c-brand-3: #737373;
+  --vp-c-brand-soft: rgba(0, 0, 0, 0.06);
+  --vp-home-hero-name-color: #181818;
+  --vp-home-hero-name-background: none;
+  --vp-home-hero-image-filter: none;
+  --vp-button-brand-bg: #181818;
+  --vp-button-brand-hover-bg: #404040;
+  --vp-button-brand-text: #ffffff;
+  --vp-button-alt-bg: transparent;
+  --vp-button-alt-hover-bg: rgba(0, 0, 0, 0.04);
+  --vp-button-alt-border: #d4d4d4;
+  --vp-button-alt-text: #181818;
+}
+
+/* ─── Monochrome Theme — Dark Mode ─── */
 .dark {
   --vp-c-bg: #000000;
   --vp-c-bg-alt: #0a0a0a;
@@ -18,14 +50,20 @@
   --vp-c-text-1: #fafafa;
   --vp-c-text-2: #a3a3a3;
   --vp-c-text-3: #737373;
+  --vp-c-brand-1: #ffffff;
+  --vp-c-brand-2: #e5e5e5;
+  --vp-c-brand-3: #a3a3a3;
+  --vp-c-brand-soft: rgba(255, 255, 255, 0.08);
   --vp-c-indigo-1: #ffffff;
   --vp-c-indigo-2: #e5e5e5;
   --vp-c-indigo-3: #a3a3a3;
   --vp-c-indigo-soft: rgba(255, 255, 255, 0.08);
   --vp-c-sponsor: #a3a3a3;
+  --vp-home-hero-name-color: #ffffff;
   --vp-button-brand-bg: #ffffff;
   --vp-button-brand-hover-bg: #e5e5e5;
   --vp-button-brand-text: #000000;
+  --vp-button-brand-hover-text: #000000;
   --vp-button-alt-bg: transparent;
   --vp-button-alt-hover-bg: #171717;
   --vp-button-alt-border: #404040;
@@ -36,9 +74,26 @@
   filter: none;
 }
 
+/* ── Hero logo: let SVG render at its intrinsic size ── */
+.VPHero .image img,
+.VPHero .hero-logo {
+  width: auto !important;
+  max-width: 90vw !important;
+  padding: 3px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  background: var(--vp-c-bg-elv);
+}
+
+.dark .VPHero .image img,
+.dark .VPHero .hero-logo {
+  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
+}
+
 .VPHero .name {
-  color: #ffffff !important;
-  -webkit-text-fill-color: #ffffff !important;
+  color: var(--vp-c-text-1) !important;
+  -webkit-text-fill-color: var(--vp-c-text-1) !important;
 }
 
 .vp-doc h2 {
@@ -46,47 +101,64 @@
 }
 
 .custom-block.tip {
-  border-color: #525252;
-  background: #0a0a0a;
+  border-color: var(--vp-c-divider);
+  background: var(--vp-c-bg-soft);
 }
 
-.card-grid {
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  margin: 1.5rem 0;
-}
-
-.card {
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 8px;
-  padding: 1.25rem;
-  background: var(--vp-c-bg-alt);
-  transition: border-color 0.2s;
-}
-
-.card:hover {
-  border-color: #ffffff;
-}
-
-.card h3 {
-  margin-top: 0;
-  font-size: 1rem;
-  color: var(--vp-c-text-1);
-}
-
-.card p {
-  margin-bottom: 0;
-  font-size: 0.925rem;
-  color: var(--vp-c-text-2);
-}
-
-.card a {
-  font-weight: 600;
-  color: var(--vp-c-text-1);
-}
 
 .VPNavBar .title {
   font-weight: 700;
   letter-spacing: -0.02em;
 }
+
+/* ── Feature grid: 4-column responsive layout ── */
+.features {
+  grid-template-columns: repeat(4, 1fr) !important;
+}
+
+@media (max-width: 1024px) {
+  .features {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .features {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Feature icons: inline SVGs use currentColor (auto black/white) ── */
+.features .icon {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+
+/* ── Feature card styling ── */
+.VPFeature {
+  padding: 0.1875rem !important;
+}
+
+.dark .VPFeature {
+  background: #0d0d0d !important;
+}
+
+/* ── Pull footer up into features ── */
+.VPHome {
+  padding-bottom: 0 !important;
+}
+
+.VPFeatures,
+.VPHomeFeatures {
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.VPFooter {
+  margin-top: -4rem !important;
+  padding-top: 0 !important;
+}
+
+
+
+
