@@ -8,6 +8,5 @@ docs/.vitepress/cache/
 .mitii/
 .mitii-session-export.json
 .mitii-audit-pack.json
-
-modules_explanation
 .vscode
+modules_explanation

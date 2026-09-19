@@ -1,34 +1,37 @@
 # Why Mitii?
 
+Mitii is a VS Code extension that gives an AI coding agent deep awareness of your repository, structured planning, and granular safety controls — all running locally on your machine.
+
 Most AI coding assistants treat your repo like a chat attachment: a few open files, maybe a search, then edits. Mitii is built for **complex, multi-file work** where the agent must **understand the whole codebase**, **plan before it acts**, and **stay under your control** — without sending your code to a vendor server.
 
 ## What makes Mitii different
 
 ### 1. Local-first by design
 
-- Your workspace index, memory, session logs, and checkpoints live in **`.mitii/`** on your machine
-- Default workflow uses **Ollama, vLLM, or your own endpoint** — no Mitii cloud required
-- API keys stay in **VS Code SecretStorage**; traffic goes only to the provider you configure
-- JSONL audit logs give you a complete record of every tool call and approval
+Everything runs on your machine. Your workspace index, memory, session logs, and checkpoints live in the **`.mitii/`** directory inside your project.
+
+- **Model providers** — connect to Ollama (local inference), vLLM (self-hosted serving), or any OpenAI-compatible endpoint. No Mitii cloud account required.
+- **Secrets** — API keys are stored in VS Code SecretStorage (encrypted at the OS level) and never written to disk in plain text.
+- **Audit trail** — every tool call, approval decision, and model response is logged as structured JSONL in `.mitii/logs/`.
 
 ### 2. Deep repo context — not just `@` mentions
 
-Mitii **indexes your workspace in the background** before you ask for edits:
+Before you ask for edits, Mitii **indexes your workspace in the background** using multiple complementary strategies:
 
 | Layer | What it does |
 |-------|----------------|
-| **FTS5** | Fast keyword search across indexed files |
-| **Tree-sitter** | Symbol extraction across 100+ languages |
-| **Repo map** | PageRank over imports/exports — surfaces structurally important files |
-| **Vectors** | Optional MiniLM embeddings for semantic “find related code” |
-| **Git + LSP** | Uncommitted diffs and diagnostics injected into context |
-| **Project rules** | Auto-loads `AGENTS.md`, `.cursor/rules`, `.clinerules`, `.mitii/rules` |
+| **FTS5** (SQLite full-text search) | Fast keyword search across all indexed files |
+| **Tree-sitter** (incremental parser) | Extracts symbols — functions, classes, imports — across 100+ languages |
+| **Repo map** | Computes a PageRank-style score over the import/export graph to surface structurally important files |
+| **Vectors** | Optional MiniLM embeddings for semantic “find related code” queries |
+| **Git + LSP** | Injects uncommitted diffs and live diagnostics into the agent's context |
+| **Project rules** | Auto-loads `AGENTS.md`, `.cursor/rules`, `.clinerules`, `.mitii/rules` so conventions are always in scope |
 
 A **hybrid retriever** merges all sources, a **reranker** trims noise, and a **token budgeter** fits the result into your model window. The **context debugger** in the sidebar shows exactly what was included, truncated, or dropped.
 
 ### 3. Plan before you act
 
-Mitii separates **thinking** from **doing**:
+Mitii separates **thinking** from **doing** into distinct modes:
 
 | Mode | Writes | Shell | Use case |
 |------|--------|-------|----------|
@@ -37,25 +40,27 @@ Mitii separates **thinking** from **doing**:
 | **Agent** | With approval | With approval | Implementation |
 | **Review** | Blocked | Read-only | Code review |
 
-Plans persist to SQLite and `.mitii/tasks/`. You can use a **cheaper plan model** and a **stronger act model** — configured separately in settings.
+A typical workflow: switch to **Plan** mode to have the agent analyze the codebase and produce a step-by-step plan. Review the plan, then switch to **Agent** mode to execute it — each write and shell command still requires your approval.
+
+Plans persist to SQLite and `.mitii/tasks/`, so you can resume a multi-step task across sessions. You can also configure a **cheaper plan model** (e.g., a small local model) and a **stronger act model** (e.g., a larger model for implementation) — set independently in settings.
 
 ### 4. Safety you can tune — not a single on/off switch
 
-Two layers work together:
+Mitii separates safety into two composable layers so you can set a broad posture and then override specific behaviors:
 
-**Autonomy presets** — quick profiles:
+**Autonomy presets** — one-click profiles that set sensible defaults for a given trust level:
 
 | Preset | Behavior |
 |--------|----------|
-| **Safe** | All edits and commands need approval; network off |
-| **Guided** (default) | Ask before file edits; read-only shell and web fetch allowed |
-| **Builder** | Auto-approve writes; mutating shell still reviewed |
-| **Pilot** | High autonomy for writes; shell still gated |
-| **Enterprise** | Locked down — no network, full review |
+| **Safe** | All edits and commands need approval; network access disabled |
+| **Guided** (default) | Ask before file edits; read-only shell and web fetch allowed without prompting |
+| **Builder** | Auto-approve file writes; mutating shell commands still require review |
+| **Pilot** | High autonomy for writes; shell commands still gated |
+| **Enterprise** | Locked down — no network, full review on every action |
 
-**Approval modes** — fine-grained control: `review_all`, `ask_edits`, `ask_deletes`, `ask_commands`, `auto`.
+**Approval modes** — fine-grained overrides that apply on top of the preset: `review_all`, `ask_edits`, `ask_deletes`, `ask_commands`, `auto`. For example, you might run **Builder** (auto-approve writes) but set `ask_commands` so shell commands still prompt.
 
-Dangerous commands (`rm -rf`, `sudo`, force-push, etc.) are **blocked at the policy layer** regardless of mode.
+Dangerous commands (`rm -rf`, `sudo`, force-push, etc.) are **blocked at the policy layer** regardless of mode or preset.
 
 ### 5. Human-in-the-loop at every risky step
 
@@ -67,7 +72,7 @@ Dangerous commands (`rm -rf`, `sudo`, force-push, etc.) are **blocked at the pol
 
 ### 6. MCP without lock-in
 
-Built-in MCP servers (filesystem, memory, sequential-thinking) start automatically. Add custom servers via:
+[MCP (Model Context Protocol)](https://modelcontextprotocol.io) is an open standard for exposing tools and data sources to AI agents. Mitii ships with built-in MCP servers (filesystem, memory, sequential-thinking) that start automatically, and lets you add custom servers via:
 
 - VS Code settings
 - `.mitii/mcp.json` or `.mcp.json`
@@ -78,31 +83,35 @@ MCP tools are namespaced as `mcp__server__tool` and pass through the **same appr
 
 ### 7. Memory that survives sessions
 
+Mitii maintains a persistent memory store so the agent can recall decisions, bugfixes, and preferences across conversations:
+
 - `memory_search` / `memory_write` tools with FTS5 + optional vector hybrid search
-- Post-task extraction captures decisions, bugfixes, and preferences
-- **Memory panel** in the sidebar to browse and clear observations
-- Secret filtering blocks API keys from being stored
+- **Post-task extraction** automatically captures key decisions and context after each task
+- **Memory panel** in the sidebar to browse, edit, or clear stored observations
+- **Secret filtering** blocks API keys and credentials from being persisted
 
 ### 8. Full observability
 
-- **Context debugger** — budget meters, source breakdown, dropped items
-- **Agent activity** — live tool and approval status
-- **Token meter** — per-turn and session usage
-- **Session logs** — structured JSONL in `.mitii/logs/`
-- **History tab** — resume past conversations
+You can inspect exactly what the agent is doing and why:
+
+- **Context debugger** — see the token budget, which sources contributed, and what was truncated or dropped
+- **Agent activity** — live feed of tool calls and approval status
+- **Token meter** — per-turn and cumulative session usage
+- **Session logs** — structured JSONL in `.mitii/logs/` for post-hoc analysis
+- **History tab** — resume or inspect past conversations
 
 ## How Mitii compares
 
 | Pain point | Typical agent | Mitii |
 |------------|---------------|-------|
-| Doesn't know the codebase | Searches on demand | Background index + hybrid retrieval |
-| Wrong files in context | Fixed window | Reranker + budgeter + debugger |
-| Edits without oversight | Auto-apply | Approval queue + inline diff |
-| Plans never executed | Chat-only plans | Persisted plans + Act mode tool loop |
-| Context runs out | Truncates silently | Compaction + auto-continue + task state |
-| No audit trail | Opaque | JSONL logs + approval audit table |
-| Vendor lock-in | One provider | 8 provider types + BYOM |
-| Rules ignored | Manual paste | Auto-loads project rules from repo |
+| Doesn't know the codebase | Searches on demand | Background index + hybrid retrieval across 6 sources |
+| Wrong files in context | Fixed window | Reranker scores relevance; budgeter fits the model window; debugger shows what was included |
+| Edits without oversight | Auto-apply | Approval queue + inline diff with Accept/Reject |
+| Plans never executed | Chat-only plans | Plans persist to disk; Agent mode executes them step by step |
+| Context runs out | Truncates silently | Compaction summarizes old turns; auto-continue resumes the task |
+| No audit trail | Opaque | JSONL logs + approval audit table in `.mitii/logs/` |
+| Vendor lock-in | One provider | 8 provider types; bring your own model (BYOM) |
+| Rules ignored | Manual paste | Auto-loads project rules from `AGENTS.md`, `.cursor/rules`, etc. |
 
 ## Who Mitii is for
 
@@ -113,13 +122,13 @@ MCP tools are namespaced as `mcp__server__tool` and pass through the **same appr
 
 ## What Mitii is not
 
-- Not a hosted SaaS — you bring the model and the machine
-- Not a headless browser — `fetch_web` is HTTP fetch for docs/APIs, not DOM automation
-- Not a replacement for code review by humans — Review mode assists; you decide
+- **Not a hosted SaaS** — you bring the model and the machine; Mitii is the orchestration layer
+- **Not a headless browser** — `fetch_web` performs HTTP requests for docs and APIs; it does not render or interact with DOMs
+- **Not a replacement for human code review** — Review mode surfaces issues and suggests fixes; you make the final call
 
 ## Next steps
 
 - [Getting Started](/getting-started/)
-- [Features overview](/features/)
-- [Architecture](/architecture)
-- [Recent improvements](/implementation/recent-improvements)
+- [Features overview](/features)
+- [Architecture](/understanding/architecture/system-architecture)
+- [Recent improvements](/changelog/recent-improvements)
