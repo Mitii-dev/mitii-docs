@@ -70,95 +70,479 @@
   --vp-button-alt-text: #fafafa;
 }
 
-.VPHero .VPImage {
-  filter: none;
-}
-
-/* ── Hero logo: let SVG render at its intrinsic size ── */
-.VPHero .image img,
-.VPHero .hero-logo {
-  width: auto !important;
-  max-width: 90vw !important;
-  padding: 3px;
-  border: 1px solid var(--vp-c-divider);
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
-  background: var(--vp-c-bg-elv);
-}
-
-.dark .VPHero .image img,
-.dark .VPHero .hero-logo {
-  box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15);
-}
-
-.VPHero .name {
-  color: var(--vp-c-text-1) !important;
-  -webkit-text-fill-color: var(--vp-c-text-1) !important;
-}
-
-.vp-doc h2 {
-  margin-top: 2rem;
-}
-
-.custom-block.tip {
-  border-color: var(--vp-c-divider);
-  background: var(--vp-c-bg-soft);
-}
-
-
 .VPNavBar .title {
   font-weight: 700;
   letter-spacing: -0.02em;
 }
 
-/* ── Feature grid: 4-column responsive layout ── */
-.features {
-  grid-template-columns: repeat(4, 1fr) !important;
+.VPNavBarSearch {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-@media (max-width: 1024px) {
-  .features {
-    grid-template-columns: repeat(2, 1fr) !important;
+/* ─── Mitii Custom Homepage ─── */
+
+.mitii-home {
+  width: 100%;
+  background: var(--vp-c-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mitii-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  box-sizing: border-box;
+  padding: 80px 24px;
+
+  text-align: center;
+}
+
+/* ─── Badge ─── */
+
+.mitii-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 7px 18px;
+  margin-bottom: 10px;
+
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 999px;
+
+  color: var(--vp-c-text-3);
+
+  font-size: 13px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Logo ─── */
+
+.mitii-logo {
+  width: 380px;
+  height: 360px;
+  object-fit: contain;
+}
+
+/* ─── Description ─── */
+
+.mitii-tagline {
+  width: 100%;
+  max-width: 620px;
+
+  margin: 0 0 30px;
+
+  color: var(--vp-c-text-2);
+
+  font-size: 18px;
+  line-height: 1.55;
+}
+
+/* ─── Buttons ─── */
+
+.mitii-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.mitii-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 40px;
+  padding: 0 22px;
+
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* Primary */
+
+.mitii-button--primary {
+  background: var(--vp-button-brand-bg);
+  color: var(--vp-button-brand-text);
+}
+
+.mitii-button--primary:hover {
+  background: var(--vp-button-brand-hover-bg);
+  color: var(--vp-button-brand-hover-text);
+}
+
+/* Secondary */
+
+.mitii-button--secondary {
+  background: var(--vp-button-alt-bg);
+  color: var(--vp-button-alt-text);
+
+  border: 1px solid var(--vp-button-alt-border);
+}
+
+.mitii-button--secondary:hover {
+  background: var(--vp-button-alt-hover-bg);
+  border-color: var(--vp-button-alt-border);
+}
+
+/* ─── Statistics ─── */
+
+.mitii-stats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-top: 90px;
+}
+
+.mitii-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  min-width: 120px;
+}
+
+.mitii-stat strong {
+  color: var(--vp-c-text-1);
+
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.mitii-stat span {
+  margin-top: 6px;
+
+  color: var(--vp-c-text-3);
+
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.mitii-stat-divider {
+  width: 1px;
+  height: 35px;
+
+  margin: 0 28px;
+
+  background: var(--vp-c-divider);
+}
+
+/* ─── Video Section ─── */
+
+.mitii-video-section {
+  width: 100%;
+  padding: 100px 24px 120px;
+  box-sizing: border-box;
+}
+
+.mitii-video {
+  width: min(850px, 100%);
+  aspect-ratio: 16 / 9;
+
+  margin: 0 auto;
+
+  overflow: hidden;
+
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 18px;
+
+  background: var(--vp-c-bg-soft);
+}
+
+.mitii-video iframe {
+  width: 100%;
+  height: 100%;
+
+  display: block;
+
+  border: 0;
+}
+
+/* ─── Applications ─── */
+
+.mitii-applications {
+  width: min(900px, 100%);
+  margin: 0 auto;
+
+  padding: 100px 24px 120px;
+  box-sizing: border-box;
+}
+
+.mitii-applications-header {
+  margin-bottom: 32px;
+}
+
+.mitii-applications-header h2 {
+  margin: 0 0 12px;
+
+  color: var(--vp-c-text-1);
+
+  font-size: 28px;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+.mitii-applications-header p {
+  margin: 0;
+
+  color: var(--vp-c-text-2);
+
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.mitii-application-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.mitii-application-card {
+  min-height: 200px;
+
+  padding: 16px;
+  box-sizing: border-box;
+
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 16px;
+
+  background: var(--vp-c-bg-soft);
+
+  text-decoration: none;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.mitii-application-card:hover {
+  border-color: var(--vp-c-text-3);
+  background: var(--vp-c-bg-elv);
+}
+
+.mitii-application-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  margin-bottom: 20px;
+
+  color: var(--vp-c-text-1);
+
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.mitii-application-card h3 {
+  margin: 0 0 8px;
+  color: var(--vp-c-text-1);
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.mitii-application-card p {
+  margin: 0;
+  color: var(--vp-c-text-2);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ─── Community ─── */
+
+.mitii-community {
+  width: min(1100px, 100%);
+  margin: 0 auto;
+
+  padding: 80px 24px 120px;
+  box-sizing: border-box;
+
+  text-align: center;
+}
+
+.mitii-community-header {
+  max-width: 650px;
+  margin: 0 auto 32px;
+}
+
+.mitii-community-header h2 {
+  margin: 0 0 10px;
+
+  color: var(--vp-c-text-1);
+
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.mitii-community-header p {
+  margin: 0;
+
+  color: var(--vp-c-text-2);
+
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.mitii-community-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+
+  text-align: left;
+}
+
+.mitii-community-card {
+  min-height: 170px;
+
+  padding: 20px;
+
+  box-sizing: border-box;
+
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 14px;
+
+  background: var(--vp-c-bg-soft);
+
+  text-decoration: none;
+
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.mitii-community-card:hover {
+  border-color: var(--vp-c-text-3);
+  background: var(--vp-c-bg-elv);
+}
+
+.mitii-community-icon {
+  margin-bottom: 18px;
+
+  font-size: 18px;
+}
+
+.mitii-community-card h3 {
+  margin: 0 0 7px;
+
+  color: var(--vp-c-text-1);
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.mitii-community-card p {
+  margin: 0;
+
+  color: var(--vp-c-text-2);
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+@media (max-width: 800px) {
+  .mitii-community-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
+
+@media (max-width: 500px) {
+  .mitii-community {
+    padding: 60px 20px 80px;
+  }
+
+  .mitii-community-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─── Mobile ─── */
 
 @media (max-width: 640px) {
-  .features {
-    grid-template-columns: 1fr !important;
+  .mitii-hero {
+    min-height: calc(100vh - var(--vp-nav-height));
+    padding: 60px 20px;
+  }
+
+  .mitii-eyebrow {
+    margin-bottom: 35px;
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+
+  .mitii-logo {
+    width: 165px;
+    height: auto;
+  }
+
+  .mitii-title {
+    margin-bottom: 35px;
+    font-size: 28px;
+  }
+
+  .mitii-tagline {
+    max-width: 360px;
+    font-size: 16px;
+  }
+
+  .mitii-actions {
+    gap: 10px;
+  }
+
+  .mitii-stats {
+    margin-top: 40px;
+  }
+
+  .mitii-stat {
+    min-width: 85px;
+  }
+
+  .mitii-stat strong {
+    font-size: 18px;
+  }
+
+  .mitii-stat span {
+    font-size: 10px;
+  }
+
+  .mitii-stat-divider {
+    margin: 0 10px;
+  }
+
+  .mitii-video-section {
+    padding: 60px 16px 80px;
+  }
+
+  .mitii-video {
+    border-radius: 12px;
+  }
+
+  .mitii-applications {
+    padding: 70px 20px 90px;
+  }
+
+  .mitii-application-grid {
+    grid-template-columns: 1fr;
   }
 }
-
-/* ── Feature icons: inline SVGs use currentColor (auto black/white) ── */
-.features .icon {
-  width: 2.25rem;
-  height: 2.25rem;
-}
-
-/* ── Feature card styling ── */
-.VPFeature {
-  padding: 0.1875rem !important;
-}
-
-.dark .VPFeature {
-  background: #0d0d0d !important;
-}
-
-/* ── Pull footer up into features ── */
-.VPHome {
-  padding-bottom: 0 !important;
-}
-
-.VPFeatures,
-.VPHomeFeatures {
-  margin-bottom: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-.VPFooter {
-  margin-top: -4rem !important;
-  padding-top: 0 !important;
-}
-
-
-
-

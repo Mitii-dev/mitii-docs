@@ -5,8 +5,8 @@ import {
   AGENT_TAGLINE,
   AGENT_DESCRIPTION,
   AGENT_DOMAIN,
-  AGENT_REPO_URL,
   AGENT_ISSUES_URL,
+  AGENT_REPO_URL,
   DOCS_REPO_URL,
   DISCORD_URL,
   WEBSITE_URL,
@@ -50,8 +50,6 @@ export default withMermaid({
       {
         text: "Community",
         items: [
-          { text: "GitHub", link: AGENT_REPO_URL },
-          { text: "Discord", link: DISCORD_URL },
           { text: "Issues", link: AGENT_ISSUES_URL },
           { text: "Contributing", link: CONTRIBUTING_URL },
         ],
@@ -76,9 +74,9 @@ export default withMermaid({
       {
         text: "Introduction",
         items: [
+          { text: "Getting Started", link: "/getting-started/" },
           { text: "Overview", link: "/" },
           { text: "Why Mitii?", link: "/why-mitii" },
-          { text: "Getting Started", link: "/getting-started/" },
           { text: "Features", link: "/features" },
         ],
       },
@@ -319,7 +317,7 @@ export default withMermaid({
       },
     ],
     socialLinks: [
-      { icon: "github", link: DOCS_REPO_URL },
+      { icon: "github", link: AGENT_REPO_URL },
       { icon: "discord", link: DISCORD_URL },
     ],
     footer: {
@@ -333,6 +331,17 @@ export default withMermaid({
     outline: { label: "On this page", depth: 3 },
   },
   head: [
+    [
+      "style",
+      {},
+      `.VPNav { position: relative; }
+.VPNav .VPSearchButton {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}`,
+    ],
     ["meta", { name: "description", content: AGENT_DESCRIPTION }],
     ["meta", { name: "theme-color", content: "#000000" }],
     ["meta", { property: "og:title", content: AGENT_FULL_NAME }],

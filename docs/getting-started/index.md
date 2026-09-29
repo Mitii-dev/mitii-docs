@@ -13,8 +13,7 @@ VS Code: Extensions → "Mitii AI Agent" · CLI: `npm install -g @mitii/cli` · 
 | Tool | Version | Needed for |
 |------|---------|------------|
 | VS Code (or Cursor, Windsurf, etc.) | 1.124+ | Extension install |
-| Node.js | 20+ | CLI, SDK, or building from source |
-| pnpm | 10.13+ | Building from source only |
+| Node.js | 20+ | CLI or SDK |
 
 You also need an LLM endpoint. The most common choices:
 
@@ -45,21 +44,6 @@ npx @mitii/cli --help
 ```
 
 > [Full CLI reference →](/using/cli)
-
-### From source
-
-For contributors who want to build and debug the extension:
-
-```bash
-git clone https://github.com/Mitii-dev/Mitii.git
-cd Mitii
-pnpm run setup          # one-shot: install + native rebuild + build (VS Code)
-# pnpm run setup:cursor # for Cursor
-```
-
-Press **F5** to launch the Extension Development Host, open a project folder, and start chatting.
-
-> [Development setup guide →](/development/development-setup)
 
 ## Connect a model
 
@@ -172,5 +156,5 @@ These are sensible defaults for a first-time setup. You can change any of them l
 - [Plan / Act workflow](/understanding/agent-intelligence/plan-act) — how planning and execution work together
 - [Architecture](/understanding/architecture/system-architecture) — how the engine is structured
 - [Configuration](/using/configuration) — every setting, explained
-- [Development](/development/development-setup) — build from source, run tests, contribute
+- [Development](/development/development-setup) — for contributors
 - [Recent improvements](/changelog/recent-improvements) — what's new
