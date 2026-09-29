@@ -20,7 +20,7 @@ Search-kit is the shared retrieval layer used by the host, the SDK, and the MCP 
 
 | Capability | Detail |
 |---|---|
-| Search providers | Brave, SearXNG, Tavily (via env config) |
+| Search providers | Brave, SearXNG, Tavily (via env config and VS Code setting) |
 | URL fetch | Content resolvers with URL safety checks |
 | Provider abstraction | Pluggable — swap providers without touching callers |
 | No agent runtime | Does not import v8 / sdk / host |

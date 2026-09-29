@@ -54,6 +54,7 @@ For cloud providers, run **Mitii: Set Provider API Key** (stored in VS Code Secr
 - **VS Code 1.124+** (or compatible fork: Cursor, Windsurf, VSCodium)
 - **Node.js 20+** on the system PATH (used for the agent runtime)
 - A connected model provider (see [CLI Setup](/using/CLI/setup) for provider details)
+- To build the CLI from source, see [Development Setup](/development/development-setup)
 
 ## Next
 

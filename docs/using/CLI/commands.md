@@ -474,4 +474,4 @@ Leave `loopPolicy` unset (or `"enabled": false`) for deploy / normal use.
 - [Setup & Providers](./setup) — configure your provider
 - [Providers](./providers) — supported providers and API key management
 - [Skills](./skills) — use skills with `ask` and other commands
-- [Development](./development) — build the CLI locally
+- [Development Setup](../../development/development-setup) — build the CLI locally

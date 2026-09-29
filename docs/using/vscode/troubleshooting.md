@@ -9,7 +9,7 @@
 
 ## Learn more
 
-- [CLI](/using/CLI/) — the terminal interface to the same engine
+- [CLI](/using/CLI/overview) — the terminal interface to the same engine
 - [Skills format](/understanding/agent-intelligence/skills) — authoring format and matcher fields
 - [Providers](/integrations/providers) — full provider reference
 - [MCP](/integrations/mcp) — MCP server configuration

@@ -148,6 +148,10 @@ Optional. When configured, the CLI injects a `SearchPort` so Decision Policy can
 
 Global alternative: `~/.mitii/config.json` with the same `searxngBaseUrl` field. Project config is tried first.
 
+Or 
+
+Add it in VS Code by opening setting from Mitii chat window, in provider scroll below and add or paste it inside `SearXNG base URL`, set the key and save it.
+
 **Option B — environment** (used when config has no `searxngBaseUrl`):
 
 ```bash

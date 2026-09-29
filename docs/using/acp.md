@@ -1,56 +1,57 @@
 # ACP Bridge
 
-Mitii ships an **ACP-lite** bridge (`@mitii/acp`) that exposes the agent over a stdio JSON-lines protocol. It is **not** the full Agent Client Protocol — it is a minimal, stable surface for embedding Mitii in external tools.
+The **ACP-lite** bridge (`@mitii/acp`) exposes Mitii over a stdio JSON-lines protocol. It is a minimal, stable surface for embedding the agent in external tools — not the full Agent Client Protocol.
 
-Decision Policy remains the authority; V8 does not import ACP.
+## Build
+
+```bash
+pnpm --filter @mitii/acp build
+```
 
 ## Run
 
 ```bash
-pnpm --filter @mitii/acp build
 mitii-acp
-# or
+# or, without a global install:
 node apps/acp/bin/mitii-acp.js
 ```
 
-### Smoke path (no model)
+### Smoke test (no model required)
 
 ```bash
 mitii-acp --echo
 ```
 
+Useful for CI pipelines or verifying the binary works without a provider configured.
+
 ## Modes
 
-| Flag | Behavior |
+| Flag | Description |
 |---|---|
-| `--echo` | Local understanding stub + `EchoLlmPort` (smoke / CI) |
-| *(default)* | `createHostLlmPorts` like CLI; loads `.mitii/config.json` when present; wires `ToolRuntimePipeline` + MCP via `@mitii/mcp` |
+| `--echo` | Runs with a local stub (`EchoLlmPort`). No model or provider needed. |
+| *(default)* | Full host mode — loads `.mitii/config.json`, wires `ToolRuntimePipeline` and MCP via `@mitii/mcp`. |
 
 ## Protocol (v1)
 
-One JSON object per line on stdin / stdout.
+One JSON object per line on **stdin** (client → bridge) and **stdout** (bridge → client).
 
-| Direction | Shape |
-|---|---|
-| → | `{ "op": "ping", "id"?: string }` |
-| ← | `{ "op": "pong", "id"?: string }` |
-| → | `{ "op": "prompt", "id", "prompt", "mode"?: "ask"\|"plan"\|"agent" }` |
-| ← | `{ "op": "event", "id", "event" }` (per RunEvent) |
-| ← | `{ "op": "result", "id", "result" }` |
+### Handshake
 
-On startup the bridge emits:
+On startup the bridge emits a ready message:
 
 ```json
 { "op": "ready", "protocol": "mitii-acp-lite", "version": 1, "mode": "echo" | "host" }
 ```
 
-## Architecture
+### Operations
 
-```
-apps/acp → @mitii/sdk / @mitii/host / @mitii/mcp → @mitii/v8
-```
-
-Does not import `apps/cli`.
+| Direction | Shape |
+|---|---|
+| → | `{ "op": "ping", "id"?: string }` |
+| ← | `{ "op": "pong", "id"?: string }` |
+| → | `{ "op": "prompt", "id", "prompt", "mode"?: "ask" \| "plan" \| "agent" }` |
+| ← | `{ "op": "event", "id", "event" }` — one per `RunEvent` |
+| ← | `{ "op": "result", "id", "result" }` — final response |
 
 ## Related
 

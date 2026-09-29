@@ -7,13 +7,13 @@ and how to **test the CLI automation path** without guessing.
 
 Related:
 
-- Skill format: [../SKILLS_FORMAT.md](../SKILLS_FORMAT.md)
-- Automation overview: [README.md](./README.md)
+- Skill format: [Skills](/understanding/agent-intelligence/skills)
+- Automation overview: [index.md](./index.md)
 - Ship checklist: [SHIP.md](./SHIP.md)
 
 ---
 
-## Mental model - four layers
+## Mental model: four layers
 
 Mitii automation is split on purpose. Each layer has one job:
 
@@ -46,7 +46,7 @@ frontmatter; put *deterministic plumbing checks* in `.sh` smoke scripts.
 
 ---
 
-## Part 1 - Designing a skill
+## 1. Designing a skill
 
 ### When you need a new skill
 
@@ -66,7 +66,7 @@ That belongs in a **spec**.
 | `packages/sdk/skills/<id>/SKILL.md` | Product defaults (`cicd-agent`, `incident-triage`) |
 | `<repo>/.mitii/skills/<id>/SKILL.md` | Repo-specific overrides (same `name` wins over bundled) |
 
-See [SKILLS_FORMAT.md](../SKILLS_FORMAT.md) for the full field list.
+See [Skills](/understanding/agent-intelligence/skills) for the full field list.
 
 ### Design process (recommended order)
 
@@ -175,7 +175,7 @@ in skill scripts. Skill scripts are hints, not a second CI system.
 
 ---
 
-## Part 2 - Agents, cron specs, and event specs
+## 2. Agents, cron specs, and event specs
 
 ### Agent file (`.mitii/agents/<id>.md`)
 
@@ -270,19 +270,14 @@ headless (no interactive clarify).
 
 ---
 
-## Part 3 - Shell scripts (`.sh`) - what they are for
+## 3. Shell scripts (`.sh`) - what they are for
 
 Mitii uses bash smoke scripts for **control-plane** validation, not for agent
 logic.
 
-### Smoke scripts (`docs/automation/smoke/`)
+### Smoke scripts
 
-| Script | Validates |
-|---|---|
-| `example1-post-commit.sh` | schedule create -> trigger -> optional `serve --echo` |
-| `example2-ci-failure.sh` | reconcile event spec -> ingest -> match -> filter |
-
-Conventions (follow these for new smokes):
+See [smoke.md](./smoke.md) for the current scripts and conventions. New smokes follow this shape:
 
 ```bash
 #!/usr/bin/env bash
@@ -342,7 +337,7 @@ Separate from Mitii smokes:
 
 ---
 
-## Part 4 - Testing a new CLI automation scenario
+## 4. Testing a new CLI automation scenario
 
 Use a **layered** approach. Do not jump straight to live GitHub.
 
@@ -422,7 +417,7 @@ Add **unit tests** when you introduce new matching logic:
 
 ### Layer 3 - Smoke script (regression gate)
 
-Add `docs/automation/smoke/my-scenario.sh`:
+Add `docs/automation/smoke/my-scenario.sh` (see [smoke.md](./smoke.md)):
 
 1. Temp DB + temp workspace
 2. Copy your event/cron spec into `$WORKDIR/.mitii/cron/...`
@@ -463,13 +458,13 @@ Same as production but isolated:
 
 ### Layer 6 - GitHub Actions
 
-Copy workflow examples from `docs/examples/workflows/mitii-*.yml` into
+Copy workflow examples from [examples.md](./examples.md) into
 `.github/workflows/` on the consumer repo. GHA is the last mile, not the first
 debug surface.
 
 ---
 
-## Part 5 - Worked example: adding "nightly dependency audit"
+## 5. Worked example: adding "nightly dependency audit"
 
 ### 1. Skill (if not covered by an existing one)
 
@@ -523,7 +518,7 @@ Run the nightly dependency audit agent prompt ...
 
 ---
 
-## Quick reference - file picker
+## Quick reference: file picker
 
 | I need to... | Create / edit |
 |---|---|
@@ -531,7 +526,7 @@ Run the nightly dependency audit agent prompt ...
 | Define a one-off scenario prompt | `.mitii/agents/<id>.md` |
 | Run on a schedule | `.mitii/cron/<name>.cron.md` |
 | Run on GitHub webhook / ingest | `.mitii/cron/events/<name>.event.md` |
-| Assert queue/match/reconcile | `docs/automation/smoke/<name>.sh` |
+| Assert queue/match/reconcile | `docs/automation/smoke/<name>.sh` (see [smoke.md](./smoke.md)) |
 | Assert domain logic (filters, redaction) | `packages/automation/src/tests/*.spec.ts` |
 | Ship to production CI | `.github/workflows/` + `.mitii/agents/` in consumer repo |
 
