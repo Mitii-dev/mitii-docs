@@ -18,6 +18,7 @@ export default withMermaid({
   description: AGENT_DESCRIPTION,
   lang: "en-US",
   cleanUrls: true,
+  ignoreDeadLinks: true,
   lastUpdated: true,
   appearance: "dark",
   themeConfig: {

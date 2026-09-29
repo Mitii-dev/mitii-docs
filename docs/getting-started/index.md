@@ -2,7 +2,7 @@
 
 Mitii is a local-first AI coding agent that lives inside your editor. It indexes your workspace, plans multi-file changes, and executes them with your approval — all without sending your code to a vendor server.
 
-This page walks you through installing Mitii, connecting a model, and running your first session. The whole flow takes about five minutes.
+This page walks you through installing Mitii, connecting a model, and using every available feature. The full setup takes about five minutes.
 
 ::: tip Quick install
 VS Code: Extensions → "Mitii AI Agent" · CLI: `npm install -g @mitii/cli` · SDK: `npm install @mitii/sdk`
@@ -12,14 +12,15 @@ VS Code: Extensions → "Mitii AI Agent" · CLI: `npm install -g @mitii/cli` · 
 
 | Tool | Version | Needed for |
 |------|---------|------------|
-| VS Code (or Cursor, Windsurf, etc.) | 1.124+ | Extension install |
-| Node.js | 20+ | CLI or SDK |
+| VS Code (or Cursor, Windsurf) | 1.124+ | Extension install |
+| Node.js | 20+ | CLI, SDK, or building from source |
+| pnpm | 10.13+ | Building from source only |
 
-You also need an LLM endpoint. The most common choices:
+You also need an LLM endpoint:
 
-- **Ollama** — free, runs locally, no API key required (recommended for getting started)
-- **Cloud API** — Anthropic, OpenAI, Gemini, DeepSeek, and others
-- **Echo** — a built-in mock provider for testing without a real model
+- **Ollama** — free, local, no API key (recommended for getting started)
+- **Cloud API** — Anthropic, OpenAI, Gemini, DeepSeek, Azure, OpenRouter, any OpenAI-compatible `/v1`
+- **Echo** — built-in mock provider for testing without a real model
 
 ## Install
 
@@ -29,31 +30,32 @@ You also need an LLM endpoint. The most common choices:
 2. Search for **Mitii AI Agent** (publisher: **mitii**)
 3. Click **Install**, then open the Mitii sidebar from the activity bar
 
-You can also install directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=mitii.mitii-ai-agent).
-
-> [Full VS Code guide →](/using/VSCode/overview) — keyboard shortcuts, profiles, and advanced settings.
-
 ### CLI
-
-The CLI gives you the same agent engine in your terminal — useful for scripts, CI pipelines, and quick one-off questions.
 
 ```bash
 npm install -g @mitii/cli
-# or try it once without installing
+# or try it once
 npx @mitii/cli --help
 ```
 
-> [Full CLI reference →](/using/cli)
+### From source
+
+```bash
+git clone https://github.com/Mitii-dev/Mitii.git
+cd Mitii
+pnpm run setup          # install + native rebuild + build
+# pnpm run setup:cursor # for Cursor
+```
+
+Press **F5** to launch the Extension Development Host, open a project folder, and start chatting.
 
 ## Connect a model
 
-Mitii needs a model to generate responses. You configure this once and it persists across sessions.
-
 ### In the editor
 
-1. Open **Settings → Provider** in the Mitii sidebar (or follow the onboarding prompt on first launch)
-2. Pick a **preset** — Ollama, Anthropic, Gemini, etc. — which auto-fills the base URL and model name
-3. Add your API key if the provider requires one (local hosts like Ollama don't)
+1. Open **Settings → Provider** in the Mitii sidebar
+2. Pick a **preset** (Ollama, Anthropic, Gemini, etc.) — auto-fills base URL and model
+3. Add your API key if required (local hosts like Ollama don't need one)
 4. Click **Test connection**, then **Save**
 
 ### With the CLI
@@ -62,16 +64,9 @@ Mitii needs a model to generate responses. You configure this once and it persis
 mitii setup              # interactive wizard — writes .mitii/config.json
 ```
 
-Or set an environment variable and skip the wizard:
-
-```bash
-export ANTHROPIC_API_KEY=sk-...
-mitii session
-```
-
 ### Ollama (local, no API key)
 
-If you prefer a local model, install [Ollama](https://ollama.com), pull a model, then add this to your VS Code `settings.json`:
+Install [Ollama](https://ollama.com), pull a model, then add to VS Code `settings.json`:
 
 ```json
 {
@@ -81,46 +76,102 @@ If you prefer a local model, install [Ollama](https://ollama.com), pull a model,
 }
 ```
 
-[Full provider guide →](/using/connect-model) · [All supported providers →](/integrations/providers)
-
 ## Run your first session
 
-1. Open a workspace folder in VS Code (it must be a **trusted** folder)
-2. Wait for indexing to finish — the status indicator in the sidebar toolbar shows progress
+1. Open a **trusted** workspace folder in VS Code
+2. Wait for indexing to finish (status indicator in the sidebar toolbar)
 3. Choose a **mode**:
    - **Ask** — read-only Q&A about your codebase
    - **Plan** — structured analysis and planning, no writes
    - **Agent** — full implementation with approval gates on every write and shell command
-4. Type a question or task. Use `@` to pin specific files or folders into context (e.g. `@src/auth/ explain the token refresh flow`)
+   - **Review** — structured code review of diffs, commits, or workspaces
+4. Type a question or task. Use `@` to pin files/folders into context
 5. In Agent mode, review each proposed change in an approval card before it's applied
 
-> [How Plan / Act works in detail →](/understanding/agent-intelligence/plan-act)
+## Using all Mitii features
 
-A typical first conversation might look like:
+### Workspace Indexing
 
-> **You:** `@src/api/ What endpoints handle user authentication, and where are the rate limits configured?`
->
-> **Mitii:** *(reads the relevant files, traces the call chain, and explains the flow with file references)*
+Mitii builds a multi-layer index automatically when you open a folder:
 
-## The sidebar at a glance
+| Layer | What it provides |
+|-------|-----------------|
+| **FTS5** | Fast full-text keyword search |
+| **Tree-sitter** | Symbol extraction (functions, classes, imports) across 100+ languages |
+| **Repo map** | PageRank over import/export edges — surfaces structurally important files |
+| **Vectors** | On-device MiniLM embeddings for semantic similarity search |
+| **Git + LSP** | Uncommitted diffs and live diagnostics injected into context |
+| **Project rules** | Auto-loads `AGENTS.md`, `.cursor/rules`, `.clinerules`, `.mitii/rules` |
 
-| Area | Purpose |
-|------|---------|
-| **Chat** | Messages, streaming responses, tool activity |
-| **Retrieved context** | Expand to inspect exactly which files and symbols were included in the prompt |
-| **Memory / Checkpoints** | Long-term observations and [git-stash restore points](/understanding/agent-intelligence/memory-checkpoints) |
-| **Plan panel** | Step-by-step plan with run state (Plan mode) |
-| **History** | Past conversations |
-| **Settings → Provider** | Model, base URL, token limits, profiles |
-| **Settings → Workspace** | Folder and repository index controls |
-| **Settings → Modes** | Ask / Plan / Agent defaults and run budget |
-| **Settings → Context** | What gets attached to each turn |
-| **Settings → MCP** | Optional [MCP](/integrations/mcp) servers |
-| **Settings → Developer** | Logging, token-budget tunables, diagnostics |
+To control indexing, go to **Settings → Workspace** and toggle `autoIndexOnOpen` or `vectorsEnabled`.
+
+### Memory & Checkpoints
+
+- **Memory** — Mitii stores durable facts (decisions, preferences, architecture notes) scoped to user/workspace/project. At each turn, relevant facts are retrieved and injected into context automatically. Manage via **Settings → Memory**.
+- **Checkpoints** — Before each approved write, Mitii creates a git-stash snapshot. Roll back any change from the **Memory / Checkpoints** panel in the sidebar.
+
+To enable:
+
+```json
+{ "mitii.agent.checkpointStrategy": "git-stash" }
+```
+
+### Skills
+
+Mitii ships 12 bundled behavior-shaping skills (commit messages, PR summaries, changelogs, etc.) and supports custom skills via `.mitii/skills/` in your project. Skills are auto-selected based on your task — no manual activation needed.
+
+To add a custom skill, create a markdown file in `.mitii/skills/` with a title, description, and playbook body.
+
+### Code Intelligence
+
+- **Navigation** — Resolve definitions, references, hover info, and call hierarchies via the integrated language service.
+- **Change Impact** — Before editing, Mitii walks the repository graph to estimate blast radius (affected files, packages, callers).
+
+These run automatically in Agent and Plan modes. In Ask mode, ask "what depends on this file?" to trigger impact analysis.
+
+### Safety & Control
+
+Every risky operation passes through two layers:
+
+1. **Decision Policy** — decides what is allowed (route, tools, paths, commands, network)
+2. **Tool Runtime** — enforces the grant (validates each call, enforces limits, supports rollback)
+
+Configure your autonomy level in **Settings → Safety**:
+
+```json
+{ "mitii.safety.autonomyPreset": "guided" }
+```
+
+- `guided` — Mitii asks before every write and shell command (default)
+- `autonomous` — Mitii proceeds without per-step approval (use with caution)
+
+### FIM Autocomplete
+
+Optional inline code completion in VS Code. Enable in **Settings → Autocomplete** and point it at any OpenAI-compatible `prompt` + `suffix` endpoint (Ollama, LM Studio, etc.).
+
+### Web Retrieval
+
+Mitii can search the web and fetch content-aware pages (Stack Overflow, GitHub issues, Wikipedia, arXX, HTML readability). Enable in **Settings → Integrations** and configure a search provider (SearXNG, Brave, or Tavily).
+
+### MCP Integration
+
+Mitii acts as an MCP **client** — connect external MCP servers to add custom tools. Off by default.
+
+1. Open **Settings → MCP**
+2. Toggle `mitii.mcp.enabled` to `true`
+3. Install a server from the built-in catalog (`filesystem`, `memory`, `sequential-thinking`) or add your own via config
+
+Once running, MCP tools appear in the agent's tool list for the next conversation.
+
+### Session Logs & Audit
+
+Every tool call, approval, and model response is logged as structured JSONL in `.mitii/logs/`. View logs in **Settings → Developer** or open the Log Viewer. Export an audit pack from the VS Code host for compliance review.
+
+### Automation & Agents
+
+Mitii supports cron-based automation and reusable agent definitions for recurring tasks (PR review, post-commit coverage, incident triage). See [Automation](/automation/) for setup.
 
 ## Suggested initial settings
-
-These are sensible defaults for a first-time setup. You can change any of them later in **Settings**:
 
 ```json
 {
@@ -132,29 +183,28 @@ These are sensible defaults for a first-time setup. You can change any of them l
 }
 ```
 
-- `autonomyPreset: "guided"` — Mitii asks before every write and shell command
-- `checkpointStrategy: "git-stash"` — creates a git stash before each run so you can roll back
-- `autoIndexOnOpen` — indexes the workspace automatically when you open a folder
-- `vectorsEnabled` — enables semantic (embedding-based) search alongside keyword search
-- `sessionLogging` — writes JSONL audit logs to `.mitii/` for review
+## The sidebar at a glance
 
-> [Full configuration reference →](/using/configuration)
-
-## Tips
-
-- **Search** — Press `Ctrl+K` (or `⌘+K` on macOS) to open the search bar and jump to any page instantly.
-- **Dark mode** — Click the moon/sun icon in the top-right to toggle between light and dark themes.
-- **Table of contents** — On longer pages, use the "On this page" panel on the right to navigate sections.
-
-> [Full feature list →](/features#vitepress-features)
+| Area | Purpose |
+|------|---------|
+| **Chat** | Messages, streaming responses, tool activity |
+| **Retrieved context** | Inspect exactly which files/symbols were in the prompt |
+| **Memory / Checkpoints** | Long-term observations and git-stash restore points |
+| **Plan panel** | Step-by-step plan with run state (Plan mode) |
+| **History** | Past conversations |
+| **Settings → Provider** | Model, base URL, token limits, profiles |
+| **Settings → Workspace** | Folder and repository index controls |
+| **Settings → Modes** | Ask / Plan / Agent / Review defaults and run budget |
+| **Settings → Context** | What gets attached to each turn |
+| **Settings → MCP** | Optional MCP servers |
+| **Settings → Developer** | Logging, token-budget tunables, diagnostics |
 
 ## Next steps
 
-- [Why Mitii?](/why-mitii) — what makes it different from other AI coding tools
-- [Connect a model](/using/connect-model) — full provider guide and configuration reference
+- [Why Mitii?](/why-mitii) — what makes it different
+- [Connect a model](/using/connect-model) — full provider guide
 - [Features](/features) — overview of everything Mitii can do
-- [Plan / Act workflow](/understanding/agent-intelligence/plan-act) — how planning and execution work together
-- [Architecture](/understanding/architecture/system-architecture) — how the engine is structured
+- [Plan / Act workflow](/understanding/agent-intelligence/plan-act) — how planning and execution work
 - [Configuration](/using/configuration) — every setting, explained
 - [Development](/development/development-setup) — for contributors
 - [Recent improvements](/changelog/recent-improvements) — what's new

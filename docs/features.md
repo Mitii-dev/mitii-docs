@@ -207,7 +207,7 @@ The same agent core powers three surfaces:
 All three share the same `@mitii/v8` engine, `@mitii/host` kit, and safety model.
 
 ::: details Deep dive
-[CLI](/using/cli) · [SDK](/using/sdk) · [Configuration](/using/configuration)
+[CLI](/using/CLI) · [SDK](/using/sdk) · [Configuration](/using/configuration)
 :::
 
 ---
