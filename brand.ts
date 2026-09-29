@@ -12,6 +12,7 @@ export const AGENT_TAGLINE =
 export const AGENT_DESCRIPTION =
   'Local-first VS Code AI coding agent with precise repo context and safe Plan/Act workflow.';
 
+export const CONTRIBUTING_URL = 'https://github.com/Mitii-dev/Mitii?tab=contributing-ov-file';
 export const AGENT_REPO_URL = 'https://github.com/codewithshinde/thunder-ai-agent';
 export const AGENT_ISSUES_URL = 'https://github.com/codewithshinde/thunder-ai-agent/issues';
 export const DOCS_REPO_URL = 'https://github.com/codewithshinde/mitii-docs';
@@ -21,3 +22,19 @@ export const DISCORD_URL = 'https://discord.gg/sa8rubf6HH';
 export const AUTHOR_NAME = 'codewithshinde';
 export const AUTHOR_GITHUB_URL = 'https://github.com/codewithshinde';
 export const AUTHOR_EMAIL = 'codewithshinde@gmail.com';
+
+/* ─── Theme ─── */
+export const darkMode = true;
+
+export const themeColors = {
+  light: {
+    primary: '#111111',
+    accent: '#444444',
+    background: '#ffffff',
+  },
+  dark: {
+    primary: '#ffffff',
+    accent: '#999999',
+    background: '#000000',
+  },
+} as const;

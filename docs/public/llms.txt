@@ -11,21 +11,21 @@
 - [Why Mitii?](/why-mitii)
 - [Getting Started](/getting-started/)
 - [Connect a Model](/getting-started/connect-model)
-- [Features](/features/)
-- [Configuration](/configuration)
+- [Features](/features)
+- [Configuration](/using/configuration)
 - [Architecture](/architecture)
-- [Development](/development)
+- [Development](/development/development-setup)
 
-## Implementation guides
+## Understanding guides
 
-- [Recent improvements (v2.6)](/implementation/recent-improvements)
-- [Plan / Act workflow](/implementation/plan-act)
-- [LLM providers](/implementation/providers)
-- [Context & indexing](/implementation/context-indexing)
-- [Safety & approvals](/implementation/safety)
-- [Memory & checkpoints](/implementation/memory-checkpoints)
-- [MCP integrations](/implementation/mcp)
-- [Built-in tools](/implementation/tools)
+- [Recent improvements (v2.6)](/changelog/recent-improvements)
+- [Plan / Act workflow](/understanding/agent-intelligence/plan-act)
+- [LLM providers](/integrations/providers)
+- [Context & indexing](/understanding/repository-understanding/context-indexing)
+- [Safety & approvals](/understanding/agent-intelligence/safety)
+- [Memory & checkpoints](/understanding/agent-intelligence/memory-checkpoints)
+- [MCP integrations](/integrations/mcp)
+- [Built-in tools](/reference/tools)
 
 ## Key differentiators
 
