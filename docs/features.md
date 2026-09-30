@@ -207,7 +207,7 @@ The same agent core powers three surfaces:
 All three share the same `@mitii/v8` engine, `@mitii/host` kit, and safety model.
 
 ::: details Deep dive
-[CLI](/using/cli) · [SDK](/using/sdk) · [Configuration](/using/configuration)
+[CLI](/using/CLI/overview) · [SDK](/using/sdk) · [Configuration](/using/configuration)
 :::
 
 ---
@@ -233,23 +233,3 @@ Validated Input → Cohesive Pipeline → Validated Result
 :::
 
 ---
-
-## VitePress Features
-
-The documentation site itself is built with [VitePress](https://vitepress.dev) and uses the following built-in capabilities:
-
-| Feature | What it does |
-|---------|-------------|
-| **Local search** | Full-text search across all docs pages — press `Ctrl+K` or click the search bar in the header |
-| **Dark-mode theming** | Monochrome light/dark palette defined in `custom.css`, toggled via the header icon |
-| **Social links & footer** | GitHub and Discord icons in the header; copyright bar at the bottom |
-| **Edit link** | "Edit this page on GitHub" link on every page |
-| **Last updated** | Git-based timestamp shown on each page |
-| **SEO meta tags** | Open Graph title/description, favicon, and theme-color for social sharing |
-| **Outline TOC** | Right-hand "On this page" table of contents (capped at h3) |
-
-### How to extend
-
-- **Site config** — `docs/.vitepress/config.ts` (nav, sidebar, search, head, outline)
-- **Theme & CSS** — `docs/.vitepress/theme/index.ts` + `docs/.vitepress/theme/custom.css`
-- **Brand constants** — `brand.ts` (names, URLs, tagline)

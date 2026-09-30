@@ -1,10 +1,11 @@
 # Daemon
 
-The Mitii daemon (`@mitii/daemon`) is a long-lived automation process that runs schedules, event triggers, and cron jobs without a human in the loop.
+The Mitii daemon (`@mitii/daemon`) runs schedules, event triggers, and cron jobs without a human in the loop.
 
-## Run
+## Install & run
 
 ```bash
+npm install -g @mitii/daemon
 mitii-daemon --cwd /path/to/repo
 # equivalent:
 mitii serve --cwd /path/to/repo
@@ -12,16 +13,15 @@ mitii serve --cwd /path/to/repo
 
 ## What it does
 
-- **Queue** — backed by `@mitii/automation` (SQLite-backed job queue)
-- **Executor** — uses `@mitii/host` (SDK executor) to run agent turns
 - **Schedules** — cron expressions, event triggers (push, CI failure), and one-shot jobs
 - **Autonomy presets** — `readonly`, `apply`, `apply_and_pr` control what the agent may do unattended
+- **Queue** — SQLite-backed job queue (`@mitii/automation`)
+- **Executor** — runs agent turns via `@mitii/host`
 
-## Key properties
+## Operational guarantees
 
 | Property | Detail |
 |---|---|
-| Does not import `apps/cli` | Standalone process; CLI is a thin wrapper |
 | Idempotent triggers | Deduplication windows prevent duplicate runs |
 | Cooldown | Per-schedule cooldown prevents rapid re-fires |
 | Max parallel | Configurable concurrency cap per schedule |

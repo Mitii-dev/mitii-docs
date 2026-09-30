@@ -28,7 +28,7 @@ const communityLinks: CommunityLink[] = [
     description:
       "Discover MCP extensions and integrations that extend what Mitii can do.",
     icon: "puzzle",
-    href: "/integrations/",
+    href: "/integrations/mcp",
   },
   {
     title: "Blog",

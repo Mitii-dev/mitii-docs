@@ -8,7 +8,7 @@ Contributions are welcome — see [CONTRIBUTING.md](https://github.com/Mitii-dev
 
 | Tool | Version | Notes |
 |------|---------|-------|
-| VS Code | 1.124+ | Cursor also works (see [native rebuild](#native-modules)) |
+| VS Code | 1.85+ | Cursor also works (see [native rebuild](#native-modules)) |
 | Node.js | 20+ | |
 | pnpm | 10.13+ | Used as the workspace package manager |
 | git | any recent version | |
@@ -57,7 +57,7 @@ This compiles all packages and rebuilds the `better-sqlite3` native module for t
 To verify the extension loads without a full Extension Host window, run:
 
 ```bash
-pnpm run f5:verify
+pnpm run verify:launch
 ```
 
 ### 4. Day-to-day development loop
@@ -65,7 +65,7 @@ pnpm run f5:verify
 After making changes to the extension or its packages:
 
 ```bash
-pnpm --filter @mitii/vscode build
+pnpm --filter ./apps/vscode build
 ```
 
 Then **reload** the Extension Development Host window (`Ctrl+Shift+P` → *Developer: Reload Window*). This picks up the rebuilt extension code.
@@ -136,20 +136,6 @@ VS Code and Cursor each ship their own Electron runtime, which uses a different 
 ::: warning
 If you see a SQLite loading error on extension startup (e.g. `NODE_MODULE_VERSION` mismatch), run `pnpm run rebuild:native` (or the Cursor variant) and reload the Extension Host.
 :::
-
-## Branding
-
-Display name constants are defined in `apps/vscode/src/shared/brand.ts`. If you change them, keep the following in sync:
-
-- `mitii-docs/brand.ts`
-- `mitii-website/brand.ts`
-
-## Related Repositories
-
-| Repo | URL | Purpose |
-|------|-----|---------|
-| Docs | [github.com/codewithshinde/mitii-docs](https://github.com/codewithshinde/mitii-docs) | This documentation site (docs.mitii.dev) |
-| Website | [github.com/codewithshinde/mitii-website](https://github.com/codewithshinde/mitii-website) | Marketing site (mitii.dev) |
 
 ## Community
 

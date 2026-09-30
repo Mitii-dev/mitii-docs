@@ -1,160 +1,116 @@
 # Getting Started
 
-Mitii is a local-first AI coding agent that lives inside your editor. It indexes your workspace, plans multi-file changes, and executes them with your approval — all without sending your code to a vendor server.
+Mitii is a local-first AI coding agent. It indexes your codebase, plans before acting, and keeps every operation under your control — all on your machine.
 
-This page walks you through installing Mitii, connecting a model, and running your first session. The whole flow takes about five minutes.
+## Prerequisites
 
-::: tip Quick install
-VS Code: Extensions → "Mitii AI Agent" · CLI: `npm install -g @mitii/cli` · SDK: `npm install @mitii/sdk`
-:::
+- **Node.js 20+** (22 recommended) — required for CLI, SDK, and Daemon
+- **VS Code 1.124+** — required for the extension
+- An LLM endpoint — [Ollama](https://ollama.com) (local, no API key) or a cloud provider (Anthropic, OpenAI, Gemini, etc.)
 
-## Requirements
+## Install the VS Code Extension
 
-| Tool | Version | Needed for |
-|------|---------|------------|
-| VS Code (or Cursor, Windsurf, etc.) | 1.124+ | Extension install |
-| Node.js | 20+ | CLI or SDK |
+Use this if you want Mitii inside your editor for day-to-day coding.
 
-You also need an LLM endpoint. The most common choices:
+1. **Install the extension**
 
-- **Ollama** — free, runs locally, no API key required (recommended for getting started)
-- **Cloud API** — Anthropic, OpenAI, Gemini, DeepSeek, and others
-- **Echo** — a built-in mock provider for testing without a real model
+   [Install from VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=mitii.mitii-ai-agent)
 
-## Install
+   Or open the Extensions panel (`Cmd+Shift+X` / `Ctrl+Shift+X`), search **Mitii AI Agent**, and click **Install**.
 
-### VS Code extension (recommended)
+2. **Open your project**
 
-1. Open the Extensions panel (`Cmd+Shift+X` / `Ctrl+Shift+X`)
-2. Search for **Mitii AI Agent** (publisher: **mitii**)
-3. Click **Install**, then open the Mitii sidebar from the activity bar
+   Open a trusted workspace folder in VS Code.
 
-You can also install directly from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=mitii.mitii-ai-agent).
+3. **Connect a model**
 
-> [Full VS Code guide →](/using/VSCode/overview) — keyboard shortcuts, profiles, and advanced settings.
+   Click the Mitii icon in the activity bar → **Settings → Provider** → pick a preset → add your API key → **Test connection** → **Save**.
 
-### CLI
+4. **Start a session**
 
-The CLI gives you the same agent engine in your terminal — useful for scripts, CI pipelines, and quick one-off questions.
+   Click the Mitii sidebar icon, wait for indexing to finish, then type your task. Use `@filename` to pin files.
 
-```bash
-npm install -g @mitii/cli
-# or try it once without installing
-npx @mitii/cli --help
-```
+More details: [VS Code Extension Overview](/using/vscode/overview)
 
-> [Full CLI reference →](/using/cli)
+## Install the CLI
 
-## Connect a model
+Use this if you want Mitii in terminal workflows (interactive + automation).
 
-Mitii needs a model to generate responses. You configure this once and it persists across sessions.
+1. **Install Node.js**
 
-### In the editor
+   Install Node.js 20+ (22 recommended).
 
-1. Open **Settings → Provider** in the Mitii sidebar (or follow the onboarding prompt on first launch)
-2. Pick a **preset** — Ollama, Anthropic, Gemini, etc. — which auto-fills the base URL and model name
-3. Add your API key if the provider requires one (local hosts like Ollama don't)
-4. Click **Test connection**, then **Save**
+2. **Install CLI**
 
-### With the CLI
+   ```bash
+   npm install -g @mitii/cli
+   ```
 
-```bash
-mitii setup              # interactive wizard — writes .mitii/config.json
-```
+3. **Authenticate**
 
-Or set an environment variable and skip the wizard:
+   ```bash
+   mitii setup
+   ```
 
-```bash
-export ANTHROPIC_API_KEY=sk-...
-mitii session
-```
+   Interactive wizard: pick a provider, enter your API key, choose a model.
 
-### Ollama (local, no API key)
+4. **Run Mitii**
 
-If you prefer a local model, install [Ollama](https://ollama.com), pull a model, then add this to your VS Code `settings.json`:
+   ```bash
+   mitii session
+   # or
+   mitii "your task"
+   ```
 
-```json
-{
-  "mitii.provider.preset": "ollama",
-  "mitii.provider.baseUrl": "http://localhost:11434/v1",
-  "mitii.provider.model": "qwen3-coder:30b"
-}
-```
+More details: [CLI Setup & Providers](/using/CLI/setup)
 
-[Full provider guide →](/using/connect-model) · [All supported providers →](/integrations/providers)
+## Install the SDK
 
-## Run your first session
+Use this if you want to embed Mitii in your own Node.js application.
 
-1. Open a workspace folder in VS Code (it must be a **trusted** folder)
-2. Wait for indexing to finish — the status indicator in the sidebar toolbar shows progress
-3. Choose a **mode**:
-   - **Ask** — read-only Q&A about your codebase
-   - **Plan** — structured analysis and planning, no writes
-   - **Agent** — full implementation with approval gates on every write and shell command
-4. Type a question or task. Use `@` to pin specific files or folders into context (e.g. `@src/auth/ explain the token refresh flow`)
-5. In Agent mode, review each proposed change in an approval card before it's applied
+1. **Install the package**
 
-> [How Plan / Act works in detail →](/understanding/agent-intelligence/plan-act)
+   ```bash
+   npm install @mitii/sdk
+   ```
 
-A typical first conversation might look like:
+2. **Create an agent**
 
-> **You:** `@src/api/ What endpoints handle user authentication, and where are the rate limits configured?`
->
-> **Mitii:** *(reads the relevant files, traces the call chain, and explains the flow with file references)*
+   ```ts
+   import { createAgent } from "@mitii/sdk";
+   const agent = createAgent({ cwd: "/path/to/repo" });
+   ```
 
-## The sidebar at a glance
+3. **Run a task**
 
-| Area | Purpose |
-|------|---------|
-| **Chat** | Messages, streaming responses, tool activity |
-| **Retrieved context** | Expand to inspect exactly which files and symbols were included in the prompt |
-| **Memory / Checkpoints** | Long-term observations and [git-stash restore points](/understanding/agent-intelligence/memory-checkpoints) |
-| **Plan panel** | Step-by-step plan with run state (Plan mode) |
-| **History** | Past conversations |
-| **Settings → Provider** | Model, base URL, token limits, profiles |
-| **Settings → Workspace** | Folder and repository index controls |
-| **Settings → Modes** | Ask / Plan / Agent defaults and run budget |
-| **Settings → Context** | What gets attached to each turn |
-| **Settings → MCP** | Optional [MCP](/integrations/mcp) servers |
-| **Settings → Developer** | Logging, token-budget tunables, diagnostics |
+   ```ts
+   await agent.run("Refactor utils to named exports");
+   ```
 
-## Suggested initial settings
+More details: [SDK Reference](/using/sdk)
 
-These are sensible defaults for a first-time setup. You can change any of them later in **Settings**:
+## Install the Daemon
 
-```json
-{
-  "mitii.safety.autonomyPreset": "guided",
-  "mitii.agent.checkpointStrategy": "git-stash",
-  "mitii.indexing.autoIndexOnOpen": true,
-  "mitii.indexing.vectorsEnabled": true,
-  "mitii.telemetry.sessionLogging": true
-}
-```
+Use this if you want unattended, long-running automation (cron jobs, event triggers).
 
-- `autonomyPreset: "guided"` — Mitii asks before every write and shell command
-- `checkpointStrategy: "git-stash"` — creates a git stash before each run so you can roll back
-- `autoIndexOnOpen` — indexes the workspace automatically when you open a folder
-- `vectorsEnabled` — enables semantic (embedding-based) search alongside keyword search
-- `sessionLogging` — writes JSONL audit logs to `.mitii/` for review
+1. **Install the package**
 
-> [Full configuration reference →](/using/configuration)
+   ```bash
+   npm install -g @mitii/daemon
+   ```
 
-## Tips
+2. **Start the daemon**
 
-- **Search** — Press `Ctrl+K` (or `⌘+K` on macOS) to open the search bar and jump to any page instantly.
-- **Dark mode** — Click the moon/sun icon in the top-right to toggle between light and dark themes.
-- **Table of contents** — On longer pages, use the "On this page" panel on the right to navigate sections.
+   ```bash
+   mitii-daemon --cwd /path/to/repo
+   ```
 
-> [Full feature list →](/features#vitepress-features)
+More details: [Daemon docs](/using/daemon)
 
 ## Next steps
 
-- [Why Mitii?](/why-mitii) — what makes it different from other AI coding tools
-- [Connect a model](/using/connect-model) — full provider guide and configuration reference
-- [Features](/features) — overview of everything Mitii can do
-- [Plan / Act workflow](/understanding/agent-intelligence/plan-act) — how planning and execution work together
-- [Architecture](/understanding/architecture/system-architecture) — how the engine is structured
 - [Configuration](/using/configuration) — every setting, explained
-- [Development](/development/development-setup) — for contributors
-- [Recent improvements](/changelog/recent-improvements) — what's new
+- [Connect a model](/using/connect-model) — full provider guide
+- [Features](/features) — indexing, memory, skills, MCP, and more
+- [Automation](/automation/) — cron jobs, event triggers
+- [Why Mitii?](/why-mitii) — design philosophy

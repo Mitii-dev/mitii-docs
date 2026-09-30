@@ -84,19 +84,6 @@ apps/daemon ──┘         │
                         └──→ @mitii/host (shared adapters)
 ```
 
-### Source Layout (V8 core)
-
-All modules live under `packages/v8/src/modules/`. Each module follows a consistent internal shape:
-
-```text
-modules/<name>/
-├── contracts/       (input, output, error, port schemas)
-├── pipeline/        (public orchestration)
-├── actions/         (meaningful pipeline steps)
-├── internal/        (private helpers, adapters)
-└── README.md        (responsibility, I/O, stages, dependencies)
-```
-
 ---
 
 ## V8 Architecture Specification
@@ -114,8 +101,6 @@ V8 is the host-neutral coding-agent runtime at the core of Mitii. It is the laye
 ```text
 Validated Input â†’ Cohesive Pipeline â†’ Validated Result
 ```
-
-In practice this means a request is normalized and validated before any work begins, processed by a small set of cohesive business modules (retrieval, decision-making, tool execution, verification), and only reported as complete when verification produces evidence that the work succeeded.
 
 Its priorities are:
 
@@ -142,7 +127,7 @@ V8 does not:
 
 ## 3. System boundaries
 
-The diagram below shows the three layers and how they relate. **Application hosts** are the surfaces a user interacts with (VS Code extension, CLI, tests). They own host-specific concerns — UI, secrets, persistence — and inject them into the runtime. The **Agent Engine** is the orchestrator inside V8: it sequences the business modules for a single run, manages the run state machine, and coordinates the model/tool loop. The **business modules** (request intake, repository state, tool runtime, and so on) are the stable public facades documented in the next section.
+**Application hosts** (VS Code, CLI, tests) own UI, secrets, and persistence, injecting them into the runtime. The **Agent Engine** orchestrates a single run: it sequences business modules, manages the state machine, and coordinates the model/tool loop. **Business modules** are the stable public facades documented below.
 
 ```text
 Application Hosts
@@ -186,7 +171,7 @@ belongs to the tool-runtime engine package path. Business facades remain under
 
 ## 4. Stable public modules
 
-V8 exposes a fixed set of public modules. Each module is a **business facade**: it owns one distinct business outcome (for example, "publish a consistent view of the repository" or "execute an authorized tool call") and hides its internal implementation behind validated input/output contracts. The table below summarizes each module's input, output, and ownership boundaries. The "Must not own" column is the key architectural constraint — it prevents modules from drifting into each other's responsibilities.
+V8 exposes a fixed set of public modules. Each is a **business facade** owning one distinct outcome, hiding internals behind validated contracts. The "Must not own" column is the key constraint preventing modules from drifting into each other's responsibilities.
 
 | Module | Primary input → output | Owns | Must not own |
 |---|---|---|---|
@@ -218,7 +203,7 @@ Adding a top-level module requires all of:
 
 ## 5. Module shape
 
-Every module follows the same internal layout so that a bug's owner is identifiable quickly. Use the smallest subset of this structure that the module needs — not every folder is required:
+Every module follows the same internal layout. Use the smallest subset that the module needs:
 
 ```text
 packages/v8/src/modules/<module-name>/
@@ -243,33 +228,17 @@ packages/v8/src/modules/<module-name>/
 └── index.ts                   explicit public facade/contracts only
 ```
 
-The key rule: `index.ts` is the only public entry point, and it re-exports facades and contracts only. Everything under `internal/`, `actions/`, and `adapters/` is private implementation that callers must not import directly.
-
-Do not create empty directories. A small module may keep its primary facade at the module root and use fewer folders.
-
-A module normally has 3–10 meaningful stages. This is a diagnostic range, not a quota. A three-stage `Retrieve → Select → Assemble` pipeline is valid. Artificial wrapper actions are not.
+`index.ts` is the only public entry point — it re-exports facades and contracts only. Everything under `internal/`, `actions/`, and `adapters/` is private. A small module may keep its primary facade at the module root. A module normally has 3–10 meaningful stages; a three-stage `Retrieve → Select → Assemble` pipeline is valid, artificial wrappers are not.
 
 ### Cohesion test
 
-When deciding whether code belongs in a module, apply these tests:
+**Keep together:** one business result, same domain reason for change, shared invariants/lifecycle, callers shouldn't know the internal sequence.
 
-**Keep code together when:**
-
-- It contributes to one recognizable business result.
-- It changes for the same domain reason.
-- It shares invariants and lifecycle.
-- Callers should not know the internal sequence.
-
-**Split code when:**
-
-- Outcomes are independently useful.
-- Lifecycles, permissions, scaling, or failure boundaries differ.
-- The current facade exposes unrelated operations.
-- A change repeatedly requires editing unrelated areas.
+**Split:** independently useful outcomes, different lifecycles/permissions/failure boundaries, unrelated operations on one facade, repeated edits to unrelated areas.
 
 ## 6. Contracts and schema ownership
 
-Boundary data MUST be validated at entry and exit. In TypeScript, Zod schemas are the runtime source of truth and compatible types SHOULD be inferred from them — this keeps the schema and the type from drifting apart:
+Boundary data MUST be validated at entry and exit. Zod schemas are the runtime source of truth; types SHOULD be inferred from them:
 
 ```ts
 export const PipelineInputSchema = z.object({
@@ -307,11 +276,11 @@ Verification â†’ Tool Runtime public facade
 All modules â†’ their own contracts, actions, internals, adapters
 ```
 
-Forbidden dependencies:
+Forbidden:
 
-- Any V8 production import from legacy paths.
-- A cross-module import from `actions/`, `internal/`, private adapters, or tests.
-- Any pipeline importing Agent Engine.
+- V8 production imports from legacy paths
+- Cross-module imports from `actions/`, `internal/`, private adapters, or tests
+- Pipeline importing Agent Engine
 - Repository modules importing Model Gateway, Prompt Construction, Verification, or Agent Engine.
 - Model Gateway importing Tool Runtime.
 - Prompt Construction executing tools or retrieval.
@@ -322,20 +291,9 @@ Application composition MAY provide one adapter object implementing several comp
 
 ## 8. Public API policy
 
-`packages/v8/src/index.ts` MUST use explicit named exports and expose only:
+`packages/v8/src/index.ts` MUST use explicit named exports. Expose only: business facades, public schemas/types, port contracts, and stable error/reason codes.
 
-- Primary business facades.
-- Public input/output schemas and types.
-- Public port contracts needed by hosts/adapters.
-- Stable public error/reason codes.
-
-It MUST NOT export:
-
-- Actions or internal algorithms.
-- Parser/provider implementation classes.
-- Concrete storage adapters unless intentionally part of the host integration API.
-- Test fixtures.
-- Wildcard barrels that accidentally expand the API.
+MUST NOT export: actions, internal algorithms, parser/provider classes, concrete storage adapters (unless part of the host integration API), test fixtures, or wildcard barrels.
 
 Each module `README.md` records responsibility, input, output, stages, dependencies, public exports, failure modes, and â€œdoes not own.â€
 
@@ -365,7 +323,6 @@ interface RepositoryRootState {
   projectCatalogRevision: string;
   codeIndexRevision?: string;
   textIndexRevision?: string;
-  vectorProfile?: string;
   vectorIndexRevision?: string;
   graphRevision?: string;
   mapRevision?: string;
@@ -402,26 +359,9 @@ V8's implementation language is TypeScript; the repositories it understands are 
 
 ### Capability model
 
-Every source artifact receives baseline support:
+Every source artifact receives baseline support: discovery, encoding/binary classification, language ID, text chunking fallback, lexical search, secret redaction, and context assembly with provenance.
 
-1. Discovery and ignore policy.
-2. Encoding/size/binary classification.
-3. Language evidence and normalized language ID.
-4. Deterministic text chunking fallback.
-5. Lexical indexing/search.
-6. Sensitive-path filtering and secret redaction.
-7. Context assembly with provenance.
-
-Enhanced capabilities are negotiated independently:
-
-- Syntax parsing.
-- Symbol/import/call/reference extraction.
-- LSP diagnostics/navigation.
-- Semantic embeddings.
-- Project/build/test/lint discovery.
-- Safe edit/format support.
-
-Each capability reports `available`, `degraded`, or `unavailable` plus provider and reason. No module assumes that parsing implies LSP, or that a detected language implies a working compiler.
+Enhanced capabilities are negotiated independently: syntax parsing, symbol/import/call extraction, LSP diagnostics, semantic embeddings, project/build/test discovery, safe edit/format. Each reports `available`, `degraded`, or `unavailable` plus provider and reason. No module assumes parsing implies LSP, or a detected language implies a working compiler.
 
 ### Target language matrix
 
@@ -447,29 +387,13 @@ This matrix defines the conformance target, not a claim that every enhanced prov
 
 ### Extension protocol
 
-A new language SHOULD require:
+A new language SHOULD require: one `LanguageProfile` registration (IDs, extensions, shebangs, aliases), optional parser/semantic/LSP/project-detector adapters, capability declarations rather than core conditionals, and fixtures for detection, chunking, symbols, and fallback. No changes to public pipeline contracts unless a genuinely new cross-language concept is required.
 
-1. One `LanguageProfile` registration containing IDs, extensions, filenames, shebangs, and aliases.
-2. Optional parser, semantic, LSP, and project-detector adapters.
-3. Capability declarations rather than core conditionals.
-4. Fixtures for detection, chunking, symbols/imports where supported, project discovery, and fallback.
-5. No changes to public pipeline contracts unless a genuinely new cross-language concept is required.
-
-Framework detection is project metadata owned by Repository State, not a new language and not a top-level V8 module.
+Framework detection is project metadata owned by Repository State, not a new language or top-level V8 module.
 
 ## 11. Request understanding and decision policy
 
-Request Understanding describes the request. It MUST NOT authorize execution.
-
-Its output includes evidence such as:
-
-- intent and alternatives
-- targets and artifacts
-- constraints
-- scope/complexity/risk
-- clarity and missing decisions
-- expected outcome
-- planning, discovery, verification, and clarification recommendations
+Request Understanding describes the request; it MUST NOT authorize execution. Its output includes intent, targets, constraints, scope/complexity/risk, clarity, expected outcome, and recommendations for planning, discovery, verification, and clarification.
 
 Decision Policy turns evidence into one authoritative decision:
 
@@ -506,15 +430,11 @@ interface ToolGrant {
 
 The model MAY propose tool calls; it MUST NOT modify the grant.
 
-Decision Policy is split conceptually into:
+Decision Policy splits into:
 
-- RoutePlanner: mode, intent, clarity, constraints, and risk become route,
-  run disposition, plan depth, and plan gate.
-- GrantCompiler: route, risk, host capabilities, path targets, command policy,
-  network allowlist, approval mode, mutation budget, and verification become a
-  `ToolGrant` snapshot.
-- InjectionGuard: prompt-injection signals may only narrow or annotate the
-  grant; they never add authority.
+- **RoutePlanner** — mode, intent, clarity, constraints, risk → route, disposition, plan depth/gate
+- **GrantCompiler** — route, risk, capabilities, paths, commands, network, approval, budget → `ToolGrant` snapshot
+- **InjectionGuard** — injection signals may only narrow the grant; never add authority
 
 Every policy-produced decision may include `DecisionTrace` with the route
 priority step, grant profile, mutation profile, injection clamp status, and
@@ -565,17 +485,9 @@ It MUST:
 
 ## 13. Model Gateway
 
-Model Gateway normalizes providers behind a capability contract:
+Model Gateway normalizes providers behind a capability contract: streaming/cancellation, structured output/tool calls, context/output limits, usage/cost data, retryable vs terminal errors, provider/model identity, deterministic test doubles.
 
-- streaming and cancellation
-- structured output/tool call support
-- context/output limits
-- usage and cost data when available
-- retryable vs terminal errors
-- provider/model identity
-- deterministic test doubles
-
-Model events MUST be discriminated, for example content delta, reasoning delta, tool-call delta, usage, completed, and failed. Avoid one object with many unrelated optional fields.
+Model events MUST be discriminated (content delta, reasoning delta, tool-call delta, usage, completed, failed). Avoid one object with many unrelated optional fields.
 
 Provider adapters MUST cover at least OpenAI, Anthropic, Gemini, Ollama, and OpenAI-compatible endpoints before provider-neutrality is claimed.
 
@@ -593,16 +505,7 @@ Tool Runtime is the only execution boundary. Initial vertical-slice tools:
 
 Each tool has an input schema, output schema, declared effects, limits, timeout, and audit metadata.
 
-Execution preflight validates:
-
-- tool is allowed
-- arguments conform to schema
-- effect is granted
-- path is normalized, resolved, and within scope
-- command matches policy without shell-injection ambiguity
-- network destination is allowed
-- repository state is acceptable
-- approval/checkpoint requirements are satisfied
+Execution preflight validates: tool allowed, arguments conform to schema, effect granted, path normalized/resolved/in-scope, command matches policy (no shell-injection), network destination allowed, repository state acceptable, approval/checkpoint satisfied.
 
 Mutation transaction:
 
