@@ -26,11 +26,11 @@ A PR is open and you want a structured Mitii review before a human reads it.
 
 ## Safety
 
-- `readonly` autonomy — never mutates files, never pushes, never merges.
+- `readonly` autonomy: never mutates files, never pushes, never merges.
 - Findings are advisory; a human makes the final call.
 
 ## Related
 
-- [Post-commit Cover](/automation/agents/post-commit-cover) — writes tests after commit
-- [Incident from Logs](/automation/agents/incident-from-logs) — triages error logs
-- [Review module](/understanding/agent-intelligence/review) — the engine behind this agent
+- [Post-commit Cover](/automation/agents/post-commit-cover): writes tests after commit
+- [Incident from Logs](/automation/agents/incident-from-logs): triages error logs
+- [Review module](/understanding/agent-intelligence/review): the engine behind this agent

@@ -1,4 +1,4 @@
-# VS Code Extension — Settings
+# VS Code Extension Settings
 
 Settings live in the Mitii sidebar webview. The left rail is **icons only** when the panel is narrow (≤440px). Hover or focus an icon to see its name in a tooltip. When the panel is wider, the rail shows **icons + labels**.
 
@@ -21,6 +21,8 @@ VS Code configuration keys use the `mitii.*` prefix. Profiles are stored in `.mi
 The index status chip opens **Workspace**. Onboarding and "open settings" open **Provider**.
 
 ## Provider
+
+![Provider settings page with preset dropdown, base URL, model, and API key fields](/mitii-provider.png)
 
 Required setup. Connection and credentials are at the top so you do not scroll past the index to find them.
 
@@ -56,7 +58,7 @@ External / product / docs asks grant the `web_search` tool when at least one sea
 
 Default order when unset: SearXNG (if URL) → Brave (if key) → Tavily (if key).
 
-Use the **base URL only** (no `/search` path). The instance must allow JSON (`/search?format=json`). CLI config uses the same providers — see [CLI Setup](/using/CLI/setup#web-search-searxng).
+Use the **base URL only** (no `/search` path). The instance must allow JSON (`/search?format=json`). CLI config uses the same providers, see [CLI Setup](/using/CLI/setup#web-search-searxng).
 
 `fetch_url` / `fetch_docs` use a content-aware `NetworkPort`: Stack Overflow answers, GitHub issue threads, Wikipedia, arXiv abstracts, then HTML readability. After `web_search`, result hosts are widened into the grant so the agent can fetch top hits.
 
@@ -78,6 +80,8 @@ The context window is the only token setting a customer needs. Retrieval, compac
 Runtime still uses the **effective** window (`0` → model preset, else the stored number). The token meter uses that effective value, not `0`.
 
 ## Autocomplete
+
+![Autocomplete settings page with enable toggle, model fields, and debounce/timeout controls](/mitii-autocomplete.png)
 
 Optional editor inline suggestions. Autocomplete is separate from Ask/Plan/Agent so you can use a fast FIM model without changing the main agent provider.
 
@@ -113,6 +117,8 @@ The HTTP body follows the generic OpenAI-style FIM shape:
 
 ## Workspace
 
+![Workspace settings page showing folder path, reindex button, and index stats](/mitii-workspace.png)
+
 | UI field | Setting | Save / reflect |
 |---|---|---|
 | Folder path | Workspace folder | Read-only display of the active root. |
@@ -122,6 +128,8 @@ The HTTP body follows the generic OpenAI-style FIM shape:
 | Index stats / capabilities | Index snapshot | Read-only diagnostics. |
 
 ## Modes
+
+![Modes settings page with Ask, Plan, and Agent rows showing approval mode and model selectors](/mitii-modes.png)
 
 ### Mode defaults (Ask / Plan / Agent)
 
@@ -156,9 +164,11 @@ Controls how much diagnostic detail lands in the run log (visible via "Export se
 
 | UI field | Setting | Notes |
 |---|---|---|
-| Log verbosity | `mitii.logVerbosity` | `minimal` (baseline events only), `standard` (adds reason codes and before/after values for clamps and soft failures), `verbose` (default; adds retry/nudge-level detail). Turn this down if exported logs are too noisy — it does not change what the agent does, only what it records. |
+| Log verbosity | `mitii.logVerbosity` | `minimal` (baseline events only), `standard` (adds reason codes and before/after values for clamps and soft failures), `verbose` (default; adds retry/nudge-level detail). Turn this down if exported logs are too noisy, it does not change what the agent does, only what it records. |
 
 ## Context
+
+![Context settings page with toggles for repo map, diagnostics, git diff, editor, tabs, memory, and checkpoints](/mitii-context.png)
 
 | UI field | Setting | Save / reflect |
 |---|---|---|
@@ -173,6 +183,8 @@ Controls how much diagnostic detail lands in the run log (visible via "Export se
 
 ## MCP
 
+![MCP settings page with enable toggle, installed servers list, and store catalog](/mitii-mcp.png)
+
 | UI field | Setting | Save / reflect |
 |---|---|---|
 | Enable MCP | `mitii.mcp.enabled` (and/or `.mitii/mcp.json`) | Master switch. Off by default. |
@@ -182,6 +194,8 @@ Controls how much diagnostic detail lands in the run log (visible via "Export se
 Runtime status (ready / error / disabled) is diagnostic only.
 
 ## Developer
+
+![Developer settings page with logging controls, token budget tunables, and diagnostics](/mitii-developer.png)
 
 Keep this minimal. Permanent ship policy lives in `pnpm policy-admin`.
 
@@ -196,11 +210,11 @@ Keep this minimal. Permanent ship policy lives in `pnpm policy-admin`.
 | UI field | Setting | Save / reflect |
 |---|---|---|
 | Debug logging | `mitii.debug` | When on, Mitii shows the Output channel and prints verbose stacks. Locked until Access is enabled. |
-| Log model I/O | `mitii.developer.modelIo` | When on (and Access enabled), writes sanitized model request/response bodies to `.mitii/logs/*-model-io.jsonl`. Large; may include workspace content — keep local. Command **Mitii: Export Shareable Diagnostic** builds one redacted markdown file under `.mitii/logs/` for pasting into online chat help. |
+| Log model I/O | `mitii.developer.modelIo` | When on (and Access enabled), writes sanitized model request/response bodies to `.mitii/logs/*-model-io.jsonl`. Large; may include workspace content, keep local. Command **Mitii: Export Shareable Diagnostic** builds one redacted markdown file under `.mitii/logs/` for pasting into online chat help. |
 
 ### Token budget (local)
 
-Optional local overrides for this machine. Module shares are of usable input and **need not total 100%** — leftover shows as **Free** in the allocation bar.
+Optional local overrides for this machine. Module shares are of usable input and **need not total 100%**, leftover shows as **Free** in the allocation bar.
 
 | UI field | Setting | Save / reflect |
 |---|---|---|
@@ -245,5 +259,5 @@ The footer is always visible.
 1. **Raw fields** (almost everything) show exactly what was saved.
 2. **Context window `0`** stays `0` in the field. Runtime and the hint use the effective preset window.
 3. **Max output `0`** stays `0` in the field. Runtime derives the reserve.
-4. **Secrets** never echo back as text — only configured / not set.
+4. **Secrets** never echo back as text, only configured / not set.
 5. **Invalid numbers** clamp to the field minimum on Save (token limits cannot go below 0; run-budget caps cannot go below 1).

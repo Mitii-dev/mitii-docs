@@ -12,7 +12,7 @@ Repository Context is one stage in the [Repository Understanding](/understanding
 Indexing → Repository State → **Repository Context** → Prompt Construction → Model Call
 ```
 
-It consumes the indexes and state tokens produced by earlier stages. It does not build indexes, publish state, allocate prompt sections, or call models — it only orchestrates the four context stages described below.
+It consumes the indexes and state tokens produced by earlier stages. It does not build indexes, publish state, allocate prompt sections, or call models, it only orchestrates the four context stages described below.
 
 ## The Four-Stage Pipeline
 

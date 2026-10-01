@@ -39,7 +39,7 @@ flowchart TD
 | **Agent Engine** | Orchestrates the model/tool loop, manages state, checkpoints, suspension/resume, and cancellation |
 | **Repository State** | Converts mutable workspace observations into immutable published descriptions (the consistency authority) |
 | **Repository Context** | Reads published state to provide file content, symbols, and search results to the model |
-| **Model Gateway** | Manages LLM interactions — prompt construction, streaming, retries, and provider abstraction |
+| **Model Gateway** | Manages LLM interactions: prompt construction, streaming, retries, and provider abstraction |
 | **Tool Runtime** | Executes tools (file read/write, search, commands) with permission checks and sandboxing |
 | **Verification** | Runs applicable checks (lint, typecheck, tests) after changes. Only Verification can authorize `verified_success` |
 | **Prompt Construction** | Assembles the final model prompt from context, memory, skills, task context, and the window budget |
@@ -70,12 +70,12 @@ The project is a monorepo with a strict dependency direction: **`apps → sdk �
 
 | Package | Role |
 |---------|------|
-| `packages/v8/` (`@mitii/v8`) | Core agent runtime — all 17 modules described above |
-| `packages/sdk/` (`@mitii/sdk`) | Host-neutral programmatic API — `createMitiiClient()`, `client.start()`, `client.resume()`, `run.events`, `run.result` |
-| `packages/host/` (`@mitii/host`) | Shared host adapters — filesystem checkpoints, skills catalog, search, indexing, bundled embeddings |
-| `apps/vscode/` | VS Code extension — sidebar webview, inline diff, diff preview, commands, settings UI |
-| `apps/cli/` | Terminal agent — interactive and non-interactive modes |
-| `apps/daemon/` | Background daemon — long-running indexing, session management, MCP server hosting |
+| `packages/v8/` (`@mitii/v8`) | Core agent runtime, all 17 modules described above |
+| `packages/sdk/` (`@mitii/sdk`) | Host-neutral programmatic API: `createMitiiClient()`, `client.start()`, `client.resume()`, `run.events`, `run.result` |
+| `packages/host/` (`@mitii/host`) | Shared host adapters: filesystem checkpoints, skills catalog, search, indexing, bundled embeddings |
+| `apps/vscode/` | VS Code extension: sidebar webview, inline diff, diff preview, commands, settings UI |
+| `apps/cli/` | Terminal agent, interactive and non-interactive modes |
+| `apps/daemon/` | Background daemon: long-running indexing, session management, MCP server hosting |
 
 ```text
 apps/vscode ──┐
@@ -96,7 +96,7 @@ The key words **MUST**, **MUST NOT**, **SHOULD**, **SHOULD NOT**, and **MAY** ar
 
 ## 1. Purpose
 
-V8 is the host-neutral coding-agent runtime at the core of Mitii. It is the layer that turns a user request into a validated, evidence-backed result — independent of whether the request arrives through VS Code, the CLI, or a test harness. Every request flows through an explicit, validated pipeline:
+V8 is the host-neutral coding-agent runtime at the core of Mitii. It is the layer that turns a user request into a validated, evidence-backed result: independent of whether the request arrives through VS Code, the CLI, or a test harness. Every request flows through an explicit, validated pipeline:
 
 ```text
 Validated Input â†’ Cohesive Pipeline â†’ Validated Result
@@ -104,7 +104,7 @@ Validated Input â†’ Cohesive Pipeline â†’ Validated Result
 
 Its priorities are:
 
-1. Correct, inspectable decisions instead of uncontrolled model judgment — every routing and permission decision is traceable to a policy, not a model guess.
+1. Correct, inspectable decisions instead of uncontrolled model judgment: every routing and permission decision is traceable to a policy, not a model guess.
 2. One authoritative repository state for retrieval, editing, and verification, so all modules agree on what the workspace contains.
 3. Strong repository understanding with bounded token use.
 4. Safe execution with explicit capabilities, approvals, checkpoints, and evidence.
@@ -156,8 +156,8 @@ The Application layer MUST own host APIs, user-interface DTO mapping, secret ret
 
 Repository packaging (Roadmap Phases 10–13 for product packages; Phase 14 last for `tests/` / `fixtures/`) places this boundary in concrete packages:
 
-- Runtime: `packages/v8` (`@mitii/v8`) — live root is `packages/v8/src/`
-- Public API: `packages/sdk` (`@mitii/sdk`) — hosts and tests prefer this
+- Runtime: `packages/v8` (`@mitii/v8`), live root is `packages/v8/src/`
+- Public API: `packages/sdk` (`@mitii/sdk`), hosts and tests prefer this
 - Hosts: `apps/vscode`, `apps/cli` (optional `apps/daemon`)
 - Consumers: `tests/`, `fixtures/`
 
@@ -228,7 +228,7 @@ packages/v8/src/modules/<module-name>/
 └── index.ts                   explicit public facade/contracts only
 ```
 
-`index.ts` is the only public entry point — it re-exports facades and contracts only. Everything under `internal/`, `actions/`, and `adapters/` is private. A small module may keep its primary facade at the module root. A module normally has 3–10 meaningful stages; a three-stage `Retrieve → Select → Assemble` pipeline is valid, artificial wrappers are not.
+`index.ts` is the only public entry point, it re-exports facades and contracts only. Everything under `internal/`, `actions/`, and `adapters/` is private. A small module may keep its primary facade at the module root. A module normally has 3–10 meaningful stages; a three-stage `Retrieve → Select → Assemble` pipeline is valid, artificial wrappers are not.
 
 ### Cohesion test
 
@@ -432,9 +432,9 @@ The model MAY propose tool calls; it MUST NOT modify the grant.
 
 Decision Policy splits into:
 
-- **RoutePlanner** — mode, intent, clarity, constraints, risk → route, disposition, plan depth/gate
-- **GrantCompiler** — route, risk, capabilities, paths, commands, network, approval, budget → `ToolGrant` snapshot
-- **InjectionGuard** — injection signals may only narrow the grant; never add authority
+- **RoutePlanner**: mode, intent, clarity, constraints, risk → route, disposition, plan depth/gate
+- **GrantCompiler**: route, risk, capabilities, paths, commands, network, approval, budget → `ToolGrant` snapshot
+- **InjectionGuard**: injection signals may only narrow the grant; never add authority
 
 Every policy-produced decision may include `DecisionTrace` with the route
 priority step, grant profile, mutation profile, injection clamp status, and

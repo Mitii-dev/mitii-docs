@@ -2,7 +2,7 @@
 
 Change Impact answers one question: **if this file or symbol changes, what else in the repository might break?**
 
-It does this by walking the repository graph — the index of files, symbols, and their relationships that Mitii builds during [context indexing](/understanding/repository-understanding/context-indexing) — starting from a single point of interest and following the edges that connect it to the rest of the codebase.
+It does this by walking the repository graph: the index of files, symbols, and their relationships that Mitii builds during [context indexing](/understanding/repository-understanding/context-indexing), starting from a single point of interest and following the edges that connect it to the rest of the codebase.
 
 The result is a structured list of affected files, symbols, and packages. Policy, planning, and verification stages use that list to decide what to check before and after a change, instead of guessing.
 
@@ -46,26 +46,26 @@ The public entry point is `ChangeImpactPipeline.analyze`.
 
 The request. Key fields:
 
-- **seed** — the file, symbol, or caret position to analyze (`ChangeImpactSeed`).
-- **direction** — `dependencies` or `dependents`.
-- **edge types** — which graph relationships to follow.
-- **hop/node limits** — traversal bounds.
-- **package flag** — whether to include package-level impact in the result.
-- **repo graph** — the graph to traverse.
-- **code-index token** — optional, ties the result to a specific index revision.
+- **seed**: the file, symbol, or caret position to analyze (`ChangeImpactSeed`).
+- **direction**: `dependencies` or `dependents`.
+- **edge types**: which graph relationships to follow.
+- **hop/node limits**: traversal bounds.
+- **package flag**: whether to include package-level impact in the result.
+- **repo graph**: the graph to traverse.
+- **code-index token**: optional, ties the result to a specific index revision.
 
 ### `ChangeImpactResult`
 
 The response. Key fields:
 
-- **status** — overall outcome of the analysis.
-- **seed / resolvedSeeds** — the requested seed and the graph nodes it resolved to.
-- **affected** — individual affected nodes, each with its hop distance, the edge type that led to it, a relevance score, and evidence.
-- **affectedFiles** — file-level summaries (`ChangeImpactAffectedFile`) used by planning and verification choices.
-- **packagesAffected** — packages touched by the change, when the package flag is set.
-- **truncated** — `true` if hop or node limits cut the traversal short.
-- **warnings / reasonCodes** — structured signals for degraded or partial results (e.g. unresolved seed, stale graph).
-- **graph revision / code-index token** — which index the result was computed against.
+- **status**: overall outcome of the analysis.
+- **seed / resolvedSeeds**: the requested seed and the graph nodes it resolved to.
+- **affected**: individual affected nodes, each with its hop distance, the edge type that led to it, a relevance score, and evidence.
+- **affectedFiles**: file-level summaries (`ChangeImpactAffectedFile`) used by planning and verification choices.
+- **packagesAffected**: packages touched by the change, when the package flag is set.
+- **truncated**: `true` if hop or node limits cut the traversal short.
+- **warnings / reasonCodes**: structured signals for degraded or partial results (e.g. unresolved seed, stale graph).
+- **graph revision / code-index token**: which index the result was computed against.
 
 ## Example Flow
 
@@ -92,7 +92,7 @@ The module then:
 2. Extracts the target: `src/LoginForm.tsx`.
 3. Resolves it to a graph node and walks the `dependents` edges.
 4. Applies any budget, path, or state constraints.
-5. Returns a structured result — recording warnings and reason codes instead of throwing when something is unresolved or stale.
+5. Returns a structured result, recording warnings and reason codes instead of throwing when something is unresolved or stale.
 
 The next pipeline stage consumes that result directly, without reinterpreting the raw prompt.
 
@@ -118,7 +118,7 @@ The result below is representative: ids, scores, and timings are illustrative, b
 }
 ```
 
-Reading this result: the analysis started from `src/LoginForm.tsx` and found one direct dependent — the test file that imports it. The `evidence` field explains *why* it was flagged, and `reasonCodes` confirms the analysis completed successfully. If the traversal had hit a limit, `truncated` would be `true` and the affected list would be partial.
+Reading this result: the analysis started from `src/LoginForm.tsx` and found one direct dependent, the test file that imports it. The `evidence` field explains *why* it was flagged, and `reasonCodes` confirms the analysis completed successfully. If the traversal had hit a limit, `truncated` would be `true` and the affected list would be partial.
 
 ## Ownership Boundaries
 
@@ -137,6 +137,6 @@ pnpm exec vitest run packages/v8/src/modules/change-impact
 
 ## Related Pages
 
-- [Context Indexing](/understanding/repository-understanding/context-indexing) — how the repository graph is built
-- [Code Navigation](/understanding/repository-understanding/code-navigation) — resolving definitions and references
-- [Verification](/understanding/execution/verification) — how impact results inform post-change checks
+- [Context Indexing](/understanding/repository-understanding/context-indexing)(how the repository graph is built)
+- [Code Navigation](/understanding/repository-understanding/code-navigation)(resolving definitions and references)
+- [Verification](/understanding/execution/verification)(how impact results inform post-change checks)

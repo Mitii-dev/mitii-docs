@@ -16,12 +16,12 @@ Mitii needed a structured code review capability. An Apache-2.0 reference implem
 ## Consequences
 
 - **Positive:** Structured, reproducible reviews; no LLM cost in the selection path.
-- **Positive:** Read-only by design — safe to run in any autonomy preset.
+- **Positive:** Read-only by design, safe to run in any autonomy preset.
 - **Negative:** The reference implementation's heuristics are now Mitii's to maintain.
-- **Neutral:** The module is optional — runs that don't need review skip it entirely.
+- **Neutral:** The module is optional, runs that don't need review skip it entirely.
 
 ## Related
 
-- [Review module](/understanding/agent-intelligence/review) — how it works
-- [PR Review Agent](/automation/agents/pr-review) — automation agent that uses review
-- [Safety](/understanding/agent-intelligence/safety) — how review findings interact with safety gates
+- [Review module](/understanding/agent-intelligence/review)(how it works)
+- [PR Review Agent](/automation/agents/pr-review)(automation agent that uses review)
+- [Safety](/understanding/agent-intelligence/safety)(how review findings interact with) safety gates

@@ -1,6 +1,6 @@
 # Request Understanding
 
-Request Understanding is the first stage of Mitii's agent pipeline. It takes a user's raw request and turns it into structured **task evidence** — a machine-readable description of what the user appears to want, how broad the task is, and what downstream stages should consider.
+Request Understanding is the first stage of Mitii's agent pipeline. It takes a user's raw request and turns it into structured **task evidence**: a machine-readable description of what the user appears to want, how broad the task is, and what downstream stages should consider.
 
 It is an analysis step, not an authorization step: it tells [Decision Policy](/understanding/agent-intelligence/decision-policy) and [Planning](/understanding/agent-intelligence/planning) what the request looks like, but it does not grant any authority to act on it.
 
@@ -25,7 +25,7 @@ Downstream stages consume the structured result of this module rather than reint
 - Runs the **Task Analyzer** to derive scope, complexity, risk, clarity, targets, constraints, and requested outcomes.
 - Recommends whether repository discovery, planning, verification, or clarification may be needed.
 
-All recommendations are advisory — Decision Policy makes the final routing and grant decisions.
+All recommendations are advisory; Decision Policy makes the final routing and grant decisions.
 
 ## Core Concepts
 
@@ -34,12 +34,12 @@ All recommendations are advisory — Decision Policy makes the final routing and
 | `UserRequestEnvelope` | The normalized input structure the host produces from a user message. It carries the message text, referenced artifacts (files, symbols), workspace identity, session context, and schema version. |
 | Super Intent | The resolved intent classification: what kind of task the user wants (`primaryTaskIntent`) and how they want the agent to interact (`interactionIntent`), plus confidence and clarification signals. |
 | Task Analyzer | The component that scores the request along dimensions (scope, complexity, risk, clarity) and extracts concrete targets and constraints. It works on dimensions, not hard-coded task templates. |
-| Task evidence | The combined output — intent plus task analysis — that downstream stages rely on. |
+| Task evidence | The combined output: intent plus task analysis, that downstream stages rely on. |
 
 ## Input and Output Contracts
 
-- **Input** — `RequestUnderstandingPipelineInput`, which is the `UserRequestEnvelope` itself.
-- **Output** — `RequestUnderstandingResult`, shaped as `{ intent, taskAnalysis }`:
+- **Input**: `RequestUnderstandingPipelineInput`, which is the `UserRequestEnvelope` itself.
+- **Output**: `RequestUnderstandingResult`, shaped as `{ intent, taskAnalysis }`:
   - `intent`: Super Intent result with status, classification, scores, confidence margin, clarification recommendation, and diagnostics.
   - `taskAnalysis`: scope, complexity, risk, clarity, targets, constraints, requested outcomes, recommendations, estimated file impact, signals, and confidence.
 
@@ -104,10 +104,10 @@ The host normalizes the message and attaches workspace and artifact context:
 
 ### What the Module Extracts
 
-1. **Target** — `src/LoginForm.tsx`, taken from the explicit reference in the message and `referencedArtifacts`.
-2. **Constraint** — existing validation and error handling must stay intact.
-3. **Requested outcomes** — disable the button while the login request is pending; show a loading label.
-4. **Intent** — an implementation task the user wants executed, with high confidence and no clarification needed.
+1. **Target**: `src/LoginForm.tsx`, taken from the explicit reference in the message and `referencedArtifacts`.
+2. **Constraint**: existing validation and error handling must stay intact.
+3. **Requested outcomes**: disable the button while the login request is pending; show a loading label.
+4. **Intent**: an implementation task the user wants executed, with high confidence and no clarification needed.
 
 ### Output: `RequestUnderstandingResult`
 

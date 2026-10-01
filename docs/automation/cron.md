@@ -77,6 +77,6 @@ On CI failure: triage the failure, produce a structured incident ticket. See [In
 
 ## Related
 
-- [Daemon](/using/daemon) — the process that runs these triggers
-- [Automation overview](/automation/) — design principles
-- [Smoke scripts](/automation/smoke) — how to test these paths
+- [Daemon](/using/daemon): the process that runs these triggers
+- [Automation overview](/automation/): design principles
+- [Smoke scripts](/automation/smoke): how to test these paths

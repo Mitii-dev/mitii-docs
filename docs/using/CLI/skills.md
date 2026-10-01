@@ -63,6 +63,6 @@ mitii ask "…" --skill .mitii/skills/my-custom-skill.md
 
 ## Next steps
 
-- [Commands & Options](./commands) — full CLI reference
-- [Setup & Providers](./setup) — configure your provider
-- [Providers](./providers) — supported providers
+- [Commands & Options](./commands): full CLI reference
+- [Setup & Providers](./setup): configure your provider
+- [Providers](./providers): supported providers

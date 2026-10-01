@@ -75,10 +75,10 @@ mitii setup --provider openai --base-url http://localhost:11434/v1 --model llama
 
 ## Note: "adapters" vs. providers
 
-The word **adapter** in the CLI docs refers to **channel bridges** (Telegram, Discord, Slack) used by `mitii connect` — not to model providers. See [Commands & Options → Connect](./commands#mitii-connect) for the full adapter reference.
+The word **adapter** in the CLI docs refers to **channel bridges** (Telegram, Discord, Slack) used by `mitii connect`, not to model providers. See [Commands & Options → Connect](./commands#mitii-connect) for the full adapter reference.
 
 ## Next steps
 
-- [Setup & Providers](./setup) — full first-run walkthrough
-- [Commands & Options](./commands) — all CLI flags, including recipes, connect, and adapters
-- [Skills](./skills) — attach skills to provider calls
+- [Setup & Providers](./setup): full first-run walkthrough
+- [Commands & Options](./commands): all CLI flags, including recipes, connect, and adapters
+- [Skills](./skills): attach skills to provider calls

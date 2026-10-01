@@ -28,12 +28,12 @@ The user message (or attached log block / trigger event) contains error output.
 
 ## Safety
 
-- `readonly` autonomy — never mutates files or pushes code.
+- `readonly` autonomy: never mutates files or pushes code.
 - Secrets are redacted before any output.
 - Deduplication via fingerprint prevents duplicate tickets.
 
 ## Related
 
-- [Post-commit Cover](/automation/agents/post-commit-cover) — companion automation agent
-- [PR Review](/automation/agents/pr-review) — read-only review agent
-- [Automation overview](/automation/) — design principles
+- [Post-commit Cover](/automation/agents/post-commit-cover): companion automation agent
+- [PR Review](/automation/agents/pr-review): read-only review agent
+- [Automation overview](/automation/): design principles

@@ -78,8 +78,8 @@ mitii -v                     # or: mitii --version / mitii version
 
 ## Next steps
 
-- [Setup & Providers](./setup) — configure a model provider and verify your config
-- [Commands & Options](./commands) — full reference for every subcommand and flag
-- [Providers](./providers) — supported providers and API key management
-- [Skills](./skills) — use the skill system from the CLI
-- [Development Setup](../../development/development-setup) — build, test, and run the CLI locally
+- [Setup & Providers](./setup): configure a model provider and verify your config
+- [Commands & Options](./commands): full reference for every subcommand and flag
+- [Providers](./providers): supported providers and API key management
+- [Skills](./skills): use the skill system from the CLI
+- [Development Setup](../../development/development-setup): build, test, and run the CLI locally

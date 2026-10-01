@@ -34,7 +34,7 @@ mitii ask "What is recursion?" --echo
 | `--mode ask` | Read-only ask mode (no tool execution) |
 | `--skill <name>` | Attach a named skill (e.g. `code-review-and-quality`) |
 
-Example — LLM findings with a skill:
+Example: LLM findings with a skill:
 
 ```bash
 mitii ask "Review the working-tree changes" --mode ask --skill code-review-and-quality --echo
@@ -126,7 +126,7 @@ The three built-in writing recipes (`commit-message`, `pr-summary`, `changelog`)
 
 ### Parameterized recipes
 
-Shareable `RecipeSpec` documents (`schemaVersion: 1`) live under `.mitii/recipes/<id>.json`. They compile to prompt / mode / skills / autonomy only — **never** widen `ToolGrant`.
+Shareable `RecipeSpec` documents (`schemaVersion: 1`) live under `.mitii/recipes/<id>.json`. They compile to prompt / mode / skills / autonomy only; they **never** widen `ToolGrant`.
 
 ```bash
 mitii recipe run after-commit --param task="write tests and open a PR"
@@ -471,7 +471,7 @@ Leave `loopPolicy` unset (or `"enabled": false`) for deploy / normal use.
 
 ## Next steps
 
-- [Setup & Providers](./setup) — configure your provider
-- [Providers](./providers) — supported providers and API key management
-- [Skills](./skills) — use skills with `ask` and other commands
-- [Development Setup](../../development/development-setup) — build the CLI locally
+- [Setup & Providers](./setup): configure your provider
+- [Providers](./providers): supported providers and API key management
+- [Skills](./skills): use skills with `ask` and other commands
+- [Development Setup](../../development/development-setup): build the CLI locally

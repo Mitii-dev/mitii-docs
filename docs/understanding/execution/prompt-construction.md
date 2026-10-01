@@ -1,6 +1,6 @@
 # Prompt Construction
 
-Prompt Construction assembles the provider-neutral `ModelRequest` that Model Gateway sends to the LLM. It takes the raw pieces of a turn — user message, conversation history, repository context, skills, memory, plan text, and tool definitions — and fits them into a single, budgeted prompt that respects the model's context window.
+Prompt Construction assembles the provider-neutral `ModelRequest` that Model Gateway sends to the LLM. It takes the raw pieces of a turn: user message, conversation history, repository context, skills, memory, plan text, and tool definitions fits them into a single, budgeted prompt that respects the model's context window.
 
 In the execution pipeline, Prompt Construction sits between the Agent Engine (which decides *what* to do) and Model Gateway (which handles *how* to talk to the provider). It is the last step before a request leaves the system.
 
@@ -10,8 +10,8 @@ In the execution pipeline, Prompt Construction sits between the Agent Engine (wh
 
 Every model has a fixed context window (e.g. 128k tokens). Prompt Construction divides that window into two regions:
 
-- **Input budget** — everything the model reads (system prompt, conversation, repository context, tools, etc.).
-- **Output reserve** — headroom left for the model's response.
+- **Input budget**: everything the model reads (system prompt, conversation, repository context, tools, etc.).
+- **Output reserve**: headroom left for the model's response.
 
 The output reserve is calculated *before* input is allocated, so the model always has room to generate. If the assembled prompt exceeds the planned input budget, the output limit is reduced to fit the remaining window rather than truncating the prompt.
 
@@ -27,7 +27,7 @@ The final `maximumOutputTokens` value is not a static number. It is recomputed e
 outputTokens = floor((contextWindow - actualPromptTokens) * 0.95)
 ```
 
-The result is then capped by any explicit host override of `maximumOutputTokens`. The planning reserve (and the legacy 5000-token default) are *not* generation ceilings — they only prevent input from consuming the entire window.
+The result is then capped by any explicit host override of `maximumOutputTokens`. The planning reserve (and the legacy 5000-token default) are *not* generation ceilings, they only prevent input from consuming the entire window.
 
 ::: info Example
 A 30k context window with a 12k assembled prompt resolves to `floor((30k − 12k) × 0.95)` = **17.1k** output tokens, not the 6k planning reserve. A turn with 10k of free context can write roughly 10k tokens.
@@ -39,15 +39,15 @@ The public entry point is `PromptConstructionPipeline.construct`. A single call 
 
 1. **Validate** the `PromptConstructionInput` (schema, version, limits).
 2. **Reserve output tokens** from the context window before allocating input.
-3. **Assemble messages** — system/developer, conversation history, user message, and tool results.
+3. **Assemble messages**: system/developer, conversation history, user message, and tool results.
 4. **Serialize repository context** into bounded prompt blocks (each block is size-capped).
-5. **Inject instruction blocks** — selected skills, memory entries, and project rules.
+5. **Inject instruction blocks**: selected skills, memory entries, and project rules.
 6. **Append plan text** if an approved plan exists for this run.
 7. **Attach tool definitions** (already filtered by Agent Engine grants).
 8. **Resolve the final output limit** from the actual prompt size.
 9. **Report** budget usage, provenance entries, any omissions or truncations, warnings, and reason codes.
 
-If a section cannot fit within its budget, it is omitted or truncated and the reason is recorded in the result — the module never silently drops content.
+If a section cannot fit within its budget, it is omitted or truncated and the reason is recorded in the result, the module never silently drops content.
 
 ## Types and Contracts
 

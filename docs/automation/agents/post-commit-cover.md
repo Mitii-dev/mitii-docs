@@ -28,13 +28,13 @@ A push or commit has landed and changed behavior lacks test coverage.
 
 ## Safety
 
-- `apply_and_pr` autonomy — may edit files and open a PR, but never pushes to protected branches.
-- Draft PR only — a human must review and merge.
+- `apply_and_pr` autonomy: may edit files and open a PR, but never pushes to protected branches.
+- Draft PR only: a human must review and merge.
 - Deduplication window (600 s) prevents duplicate runs on rapid pushes.
 
 ## Related
 
-- [Incident from Logs](/automation/agents/incident-from-logs) — companion automation agent
-- [PR Review](/automation/agents/pr-review) — read-only review agent
-- [Shipping](/automation/SHIP) — E2E shipping loops
-- [Cron & Events](/automation/cron) — trigger definitions
+- [Incident from Logs](/automation/agents/incident-from-logs): companion automation agent
+- [PR Review](/automation/agents/pr-review): read-only review agent
+- [Shipping](/automation/SHIP): E2E shipping loops
+- [Cron & Events](/automation/cron): trigger definitions

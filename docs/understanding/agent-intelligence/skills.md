@@ -8,12 +8,12 @@ In the broader pipeline, Skills sits between **Request Understanding** (which pr
 
 The selection pipeline runs in this order:
 
-1. **Load** — fetch skill metadata from the catalog (via `SkillsCatalogPort`).
-2. **Match** — score each skill against the query, route, mode, and task evidence using keyword/similarity scoring.
-3. **Resolve conflicts** — if multiple skills belong to the same conflict group, keep the highest-ranked one.
-4. **Hydrate** — load the full playbook body for each selected skill.
-5. **Budget** — pack skills into the token budget in rank order. If a full playbook exceeds the remaining budget, fall back to the compact L1 body before omitting the skill entirely.
-6. **Return** — emit prompt-ready instruction blocks with provenance, plus any omissions, warnings, and reason codes.
+1. **Load**: fetch skill metadata from the catalog (via `SkillsCatalogPort`).
+2. **Match**: score each skill against the query, route, mode, and task evidence using keyword/similarity scoring.
+3. **Resolve conflicts**: if multiple skills belong to the same conflict group, keep the highest-ranked one.
+4. **Hydrate**: load the full playbook body for each selected skill.
+5. **Budget**: pack skills into the token budget in rank order. If a full playbook exceeds the remaining budget, fall back to the compact L1 body before omitting the skill entirely.
+6. **Return**: emit prompt-ready instruction blocks with provenance, plus any omissions, warnings, and reason codes.
 
 The public entry point is `SkillsPipeline.select`.
 
@@ -32,9 +32,9 @@ The public entry point is `SkillsPipeline.select`.
 
 ```text
 skills/
-  pipeline/                 SkillsPipeline — public facade
+  pipeline/                 SkillsPipeline, public facade
   actions/                  Matching, conflict resolution, budget packing
-  adapters/                 InMemorySkillsCatalog — test/simple-host catalog
+  adapters/                 InMemorySkillsCatalog, test/simple-host catalog
   contracts/
     input/                  SkillsSelectInput
     output/                 SkillDescriptor, SkillsSelectResult
@@ -49,22 +49,22 @@ skills/
 
 `SkillsSelectInput` carries everything the pipeline needs to make a selection:
 
-- **query** — the user's request text.
-- **mode / route** — the agent's current operating mode and decision route (e.g. `execute`, `explore`).
-- **taskEvidence** — the `SkillTaskEvidence` struct (see Key Concepts).
-- **budgetTokens** — the token budget for skill instructions.
-- **maxSkills** — upper bound on how many skills to return.
+- **query**: the user's request text.
+- **mode / route**: the agent's current operating mode and decision route (e.g. `execute`, `explore`).
+- **taskEvidence**: the `SkillTaskEvidence` struct (see Key Concepts).
+- **budgetTokens**: the token budget for skill instructions.
+- **maxSkills**: upper bound on how many skills to return.
 
 ### Output
 
 `SkillsSelectResult` is what the next pipeline stage (Prompt Construction) consumes:
 
-- **status** — `selected`, `empty`, or `error`.
-- **instructions** — array of `SkillInstructionBlock` (content, priority, provenance).
-- **omissions** — skills that were ranked but could not fit in the budget.
-- **usedTokens / budgetTokens** — actual vs. allocated token usage.
-- **warnings / reasonCodes** — machine-readable signals for degraded or partial results.
-- **durationMs** — elapsed time for observability.
+- **status**: `selected`, `empty`, or `error`.
+- **instructions**: array of `SkillInstructionBlock` (content, priority, provenance).
+- **omissions**: skills that were ranked but could not fit in the budget.
+- **usedTokens / budgetTokens**: actual vs. allocated token usage.
+- **warnings / reasonCodes**: machine-readable signals for degraded or partial results.
+- **durationMs**: elapsed time for observability.
 
 ## Behavioral Guarantees
 

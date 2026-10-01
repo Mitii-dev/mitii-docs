@@ -6,8 +6,8 @@ Mitii controls what the agent is allowed to do through a two-layer safety system
 
 Every tool call the agent attempts passes through two layers before it executes:
 
-1. **Decision Policy** — evaluates the request and produces an `ExecutionDecision`. This decision specifies which tools are allowed, what effects are permitted, which paths the agent may touch, and whether a human must approve the action first.
-2. **Tool Runtime** — receives the decision and enforces it. It validates each tool call against the granted permissions and executes it through the host. It does not make its own allow/deny decisions; it strictly enforces what the Decision Policy granted.
+1. **Decision Policy**: evaluates the request and produces an `ExecutionDecision`. This decision specifies which tools are allowed, what effects are permitted, which paths the agent may touch, and whether a human must approve the action first.
+2. **Tool Runtime**: receives the decision and enforces it. It validates each tool call against the granted permissions and executes it through the host. It does not make its own allow/deny decisions; it strictly enforces what the Decision Policy granted.
 
 When an action requires consent, an **approval queue** sits between the two layers. You see an approval card in the sidebar, review the proposed change, and approve or deny it.
 
@@ -69,8 +69,8 @@ Tools that only inspect the workspace never require approval. These include:
 
 Two exceptions:
 
-- `fetch_web` — requires network access to be enabled (off in `safe` and `enterprise` presets)
-- `ask_question` — always pauses for your response, since it is a direct question to you
+- `fetch_web`: requires network access to be enabled (off in `safe` and `enterprise` presets)
+- `ask_question`: always pauses for your response, since it is a direct question to you
 
 ### Blocked command patterns
 
@@ -98,19 +98,19 @@ Under the hood, the Decision Policy produces a `ToolGrant` object that the Tool 
 | `mutationBudget` | `maxPatchesPerCall`, `maxUniqueFilesPerCall`, `maxPatchPayloadCharacters`, `requireBatchedExecution` |
 | `approvalMode` | `on_request`, `auto`, or `never` |
 
-The **mutation budget** caps how much a single tool call can change — preventing one call from rewriting hundreds of files or emitting an oversized patch payload.
+The **mutation budget** caps how much a single tool call can change, preventing one call from rewriting hundreds of files or emitting an oversized patch payload.
 
 ## Prompt-injection defense
 
-Before the Decision Policy grants any permissions, it scans the incoming request for prompt-injection signals (e.g. instructions embedded in file content or tool output that attempt to escalate privileges). When detected, it clamps the resulting `ToolGrant` — reducing allowed effects, narrowing path scopes, or escalating the approval mode — so the Tool Runtime never sees an over-privileged grant.
+Before the Decision Policy grants any permissions, it scans the incoming request for prompt-injection signals (e.g. instructions embedded in file content or tool output that attempt to escalate privileges). When detected, it clamps the resulting `ToolGrant`: reducing allowed effects, narrowing path scopes, or escalating the approval mode so the Tool Runtime never sees an over-privileged grant.
 
 ## Approval experience
 
 When an action requires your approval, Mitii presents it in the sidebar:
 
-- **Approval cards** — show the proposed action with **Approve**, **Approve for task** (auto-approve similar actions for the rest of this run), or **Deny**.
-- **Questions** — when the agent calls `ask_question`, it renders as multiple-choice buttons you can click.
-- **Inline diff** — for file writes and patches, you can open the change in the editor to review the diff before approving.
+- **Approval cards**: show the proposed action with **Approve**, **Approve for task** (auto-approve similar actions for the rest of this run), or **Deny**.
+- **Questions**: when the agent calls `ask_question`, it renders as multiple-choice buttons you can click.
+- **Inline diff**: for file writes and patches, you can open the change in the editor to review the diff before approving.
 
 ### Inline diff commands
 
@@ -136,8 +136,8 @@ This is `false` by default to avoid stealing editor focus during a run.
 
 The Decision Policy can require the agent to produce evidence before a run is considered complete. For example, it may mandate that tests or diagnostics pass before the agent reports success.
 
-- `minimumEvidence` — the type of evidence required (e.g. `tests_or_diagnostics`)
-- `allowUnavailable` — whether the run can proceed if the evidence source is not available
+- `minimumEvidence`: the type of evidence required (e.g. `tests_or_diagnostics`)
+- `allowUnavailable`: whether the run can proceed if the evidence source is not available
 
 This prevents the agent from claiming a task is done without actually verifying the result.
 
@@ -157,7 +157,7 @@ When VS Code marks a workspace as untrusted, Mitii blocks all writes and shell c
 
 ## MCP tool exclusions
 
-In **Act mode**, you can exclude specific MCP (Model Context Protocol) tools from execution. The MCP integration is **off by default** — enable it with `mitii.mcp.enabled: true` and then configure exclusions as needed.
+In **Act mode**, you can exclude specific MCP (Model Context Protocol) tools from execution. The MCP integration is **off by default**, enable it with `mitii.mcp.enabled: true` and then configure exclusions as needed.
 
 ## Checkpoints
 
@@ -167,10 +167,10 @@ Before any approved write executes, Mitii creates an automatic checkpoint so you
 
 Every tool call and approval decision is recorded for traceability:
 
-- **Per-call audit** — `callId`, `toolName`, `status`, `inputPreview`, `bytesProduced`, `truncated`, `redacted`
-- **SQLite** — `approval_audit` table (persistent, queryable)
-- **JSONL session log** — `approval_decision` events
-- **Reason codes** — structured codes on every `ExecutionDecision` (e.g. `execute_requested`, `localized_change`, `verification_required`) explaining *why* the policy made its decision
+- **Per-call audit**: `callId`, `toolName`, `status`, `inputPreview`, `bytesProduced`, `truncated`, `redacted`
+- **SQLite**: `approval_audit` table (persistent, queryable)
+- **JSONL session log**: `approval_decision` events
+- **Reason codes**: structured codes on every `ExecutionDecision` (e.g. `execute_requested`, `localized_change`, `verification_required`) explaining *why* the policy made its decision
 
 ## Codebase location
 

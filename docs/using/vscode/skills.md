@@ -1,4 +1,4 @@
-# VS Code Extension — Skills
+# VS Code Extension Skills
 
 Skills are reusable, named instruction bundles that shape how Mitii behaves for a given task. In the VS Code extension you attach them per message in chat.
 
@@ -22,4 +22,4 @@ Recipes are pre-configured skill attachments that auto-fire on specific commands
 
 These entry points gather git status/diff/log and set `requiredSkillIds` so the skill is guaranteed. Authoring format and matcher fields: [docs/SKILLS_FORMAT.md](/understanding/agent-intelligence/skills).
 
-The CLI also accepts `mitii ask` with a recipe name (commit message, summary, changelog) — same skills, same output.
+The CLI also accepts `mitii ask` with a recipe name (commit message, summary, changelog) same skills, same output.

@@ -4,10 +4,10 @@ The Review module performs structured, read-only code review of diffs, commits, 
 
 ## What it does
 
-- **Validates review input** — workspace / range / commit / scan scope
-- **Deterministically selects review targets** — no LLM in the selection path
-- **Produces structured findings** — severity, category, file, line, description
-- **Read-only** — never mutates files; findings are advisory
+- **Validates review input**: workspace / range / commit / scan scope
+- **Deterministically selects review targets**: no LLM in the selection path
+- **Produces structured findings**: severity, category, file, line, description
+- **Read-only**: never mutates files; findings are advisory
 
 ## Modes
 
@@ -26,6 +26,6 @@ The Review module performs structured, read-only code review of diffs, commits, 
 
 ## Related
 
-- [Safety](/understanding/agent-intelligence/safety) — how review findings interact with safety gates
-- [Verification](/understanding/execution/verification) — post-execution verification
-- [PR Review Agent](/automation/agents/pr-review) — automation agent that uses review
+- [Safety](/understanding/agent-intelligence/safety): how review findings interact with safety gates
+- [Verification](/understanding/execution/verification): post-execution verification
+- [PR Review Agent](/automation/agents/pr-review): automation agent that uses review

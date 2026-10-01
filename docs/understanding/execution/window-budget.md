@@ -2,7 +2,7 @@
 
 Window Budget is the module that converts a model's advertised context window into a single, proportional token allocation for every part of the agent runtime. Instead of each subsystem (prompt construction, repository retrieval, planning, skills, mutation batching, compaction, run caps) hard-coding its own token limits, they all read from one derived `WindowPolicy` object.
 
-This means a 30k-token local model and a 200k-token cloud model get proportionally different budgets for the same features — no configuration changes required.
+This means a 30k-token local model and a 200k-token cloud model get proportionally different budgets for the same features, no configuration changes required.
 
 ## Core Concepts
 
@@ -29,7 +29,7 @@ U  = W − O − T                  // usable input
 loop = U × loopSafetyRatio
 ```
 
-Tool JSON is treated as a **fixed cost** — it does not scale with the remaining budget. The shares below are of `U`, not of `W`:
+Tool JSON is treated as a **fixed cost**, it does not scale with the remaining budget. The shares below are of `U`, not of `W`:
 
 | Slice | Share of `U` | Cap |
 |---|---|---|
@@ -185,7 +185,7 @@ The VS Code host maps Developer → **Token budget** onto `policy` overrides:
 
 `mitii.provider.maximumOutputTokens = 0` means "derive `O` from the window." A positive value is a host override and still cannot exceed `W − 1`. The historical default `5000` is treated as unset (`output_legacy_default_ignored`) so mutation batches are not truncated.
 
-`O` is the planning reserve — it ensures input content does not fill the entire window. Per-turn `max_tokens` is leftover context, owned by Prompt Construction / Agent Engine, unless the host overrode output.
+`O` is the planning reserve: it ensures input content does not fill the entire window. Per-turn `max_tokens` is leftover context, owned by Prompt Construction / Agent Engine, unless the host overrode output.
 
 ## Design principles
 

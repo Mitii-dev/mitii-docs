@@ -52,5 +52,5 @@ Point your workspace at a different skills directory via configuration.
 
 ## Related
 
-- [Skills](/using/skills) — skill format and how skills are loaded
-- [Skills (understanding)](/understanding/agent-intelligence/skills) — internal skill pipeline
+- [Skills](/using/skills)(skill format and how skills are loaded)
+- [Skills (understanding)](/understanding/agent-intelligence/skills)(internal skill pipeline)

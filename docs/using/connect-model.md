@@ -2,14 +2,14 @@
 
 Configure which LLM Mitii talks to. The same setup works across the VS Code extension, the CLI, and any custom host built on `@mitii/sdk`.
 
-Config lives in `.mitii/config.json` (project) or `~/.mitii/config.json` (global). API keys stay in environment variables or VS Code SecretStorage — never in the config file.
+Config lives in `.mitii/config.json` (project) or `~/.mitii/config.json` (global). API keys stay in environment variables or VS Code SecretStorage, never in the config file.
 
 ## Quick setup
 
 ### VS Code
 
 1. **Settings → Provider** in the Mitii sidebar.
-2. Pick a **preset** — auto-fills base URL and model.
+2. Pick a **preset**, auto-fills base URL and model.
 3. Add your API key (local providers like Ollama don't need one).
 4. **Test connection** → **Save**.
 
@@ -67,7 +67,7 @@ Default model: `gemini-2.0-flash`.
 
 ### OpenAI / DeepSeek / Cursor / Codex
 
-Select the matching preset — base URL and model fill in automatically.
+Select the matching preset, base URL and model fill in automatically.
 
 ### Self-hosted / OpenAI-compatible
 

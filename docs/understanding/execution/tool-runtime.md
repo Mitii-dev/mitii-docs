@@ -1,17 +1,17 @@
 # Tool Runtime
 
-Tool Runtime is the enforcement and execution layer for tool calls. When the model requests a tool (e.g. `read_file`, `apply_patch`, `run_command`), Agent Engine passes the request to Tool Runtime along with a `ToolGrant` — the authorization decision produced by Decision Policy. Tool Runtime validates the request against that grant, executes it through host ports, and returns a bounded `ToolResult` with audit information.
+Tool Runtime is the enforcement and execution layer for tool calls. When the model requests a tool (e.g. `read_file`, `apply_patch`, `run_command`), Agent Engine passes the request to Tool Runtime along with a `ToolGrant`, the authorization decision produced by Decision Policy. Tool Runtime validates the request against that grant, executes it through host ports, and returns a bounded `ToolResult` with audit information.
 
 Tool Runtime never decides whether a tool call is allowed. It enforces the grant it receives and nothing more.
 
 ## How a Tool Call Flows
 
-1. **Receive** — Tool Runtime receives a `ToolInvocationInput` containing the tool name, arguments, workspace root, and the `ToolGrant`.
-2. **Validate** — It checks the tool name, effect, path scope, command rules, network hosts, output limits, and mutation batch limits against the grant.
-3. **Execute** — The tool runs through registered definitions and host ports (filesystem, process, network, git, etc.).
-4. **Sanitize** — Output is redacted, truncated, and bounded by the minimum of tool, grant, and session limits.
-5. **Audit** — A structured audit event is emitted for every call.
-6. **Return** — A `ToolResult` with status, output, warnings, and audit data is returned to Agent Engine.
+1. **Receive**: Tool Runtime receives a `ToolInvocationInput` containing the tool name, arguments, workspace root, and the `ToolGrant`.
+2. **Validate**: It checks the tool name, effect, path scope, command rules, network hosts, output limits, and mutation batch limits against the grant.
+3. **Execute**: The tool runs through registered definitions and host ports (filesystem, process, network, git, etc.).
+4. **Sanitize**: Output is redacted, truncated, and bounded by the minimum of tool, grant, and session limits.
+5. **Audit**: A structured audit event is emitted for every call.
+6. **Return**: A `ToolResult` with status, output, warnings, and audit data is returned to Agent Engine.
 
 If the tool supports rollback (e.g. `apply_patch`), Tool Runtime can revert the mutation on failure.
 
@@ -53,12 +53,12 @@ tool-runtime/
 
 Mutation tools (`apply_patch`, `delete_file`, `move_file`) have additional constraints beyond standard path scoping:
 
-- **Path scopes** — Mutation tools authorize against `grant.mutationPathScopes` when present; discovery tools (e.g. `read_file`, `search_files`) use `grant.pathScopes`.
-- **Batch limits** — Each call enforces `maxPatchesPerCall`, `maxUniqueFilesPerCall`, and `maxPatchPayloadCharacters`. Exceeding any cap fails preflight with `mutation_budget_exceeded` (not a generic `limit_exceeded`).
+- **Path scopes**: Mutation tools authorize against `grant.mutationPathScopes` when present; discovery tools (e.g. `read_file`, `search_files`) use `grant.pathScopes`.
+- **Batch limits**: Each call enforces `maxPatchesPerCall`, `maxUniqueFilesPerCall`, and `maxPatchPayloadCharacters`. Exceeding any cap fails preflight with `mutation_budget_exceeded` (not a generic `limit_exceeded`).
 
 ### `apply_patch` Matching Rules
 
-`apply_patch` uses exact `oldText` matching — no fuzzy match, no regex.
+`apply_patch` uses exact `oldText` matching: no fuzzy match, no regex.
 
 - By default, `oldText` must match exactly one location in the file.
 - `replaceAll: true` replaces every exact occurrence in that file.
@@ -110,7 +110,7 @@ pnpm exec vitest run packages/v8/src/engine/tool-runtime
 
 ## Example: `read_file` Call
 
-The following example shows a realistic `read_file` request and response. The values are representative — ids and timings are illustrative, but the shape matches the actual contract.
+The following example shows a realistic `read_file` request and response. The values are representative: ids and timings are illustrative, but the shape matches the actual contract.
 
 ### Input
 

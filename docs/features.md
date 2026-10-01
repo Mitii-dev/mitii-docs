@@ -1,6 +1,6 @@
 # Features
 
-Mitii is a local-first, approval-gated coding-agent runtime. It indexes your workspace, plans before acting, and keeps every operation under your control — without sending code to a vendor server.
+Mitii is a local-first, approval-gated coding-agent runtime. It indexes your workspace, plans before acting, and keeps every operation under your control, without sending code to a vendor server.
 
 This page gives an overview of what Mitii can do and how its major subsystems fit together. For implementation details, follow the deep-dive links at the end of each section.
 
@@ -16,7 +16,7 @@ This page gives an overview of what Mitii can do and how its major subsystems fi
 | Code intelligence | Definition/reference resolution and change-impact analysis |
 | Memory & context | Hybrid retrieval, access-based retention, privacy redaction |
 | Skills | 12 bundled behavior-shaping skills, extensible via `.mitii/skills/` |
-| Provider support | LLM-agnostic — Anthropic, OpenAI, Google, local models, any OpenAI-compatible endpoint |
+| Provider support | LLM-agnostic: Anthropic, OpenAI, Google, local models, any OpenAI-compatible endpoint |
 | MCP | Optional Model Context Protocol integration (off by default) |
 | Multi-surface | Same core powers VS Code extension, CLI, and SDK |
 
@@ -24,13 +24,13 @@ This page gives an overview of what Mitii can do and how its major subsystems fi
 
 ## Workspace Indexing
 
-Before any agent interaction, Mitii builds a multi-layer index of your repository. All indexing and embedding runs on your machine — no API calls, no network round-trips.
+Before any agent interaction, Mitii builds a multi-layer index of your repository. All indexing and embedding runs on your machine, no API calls, no network round-trips.
 
 | Layer | What it provides |
 |-------|-----------------|
 | **FTS5** | Fast full-text keyword search across all indexed files |
 | **Tree-sitter** | Symbol extraction (functions, classes, imports) across 100+ languages |
-| **Repo map** | PageRank over import/export edges — surfaces structurally important files |
+| **Repo map** | PageRank over import/export edges, surfaces structurally important files |
 | **Vectors** | On-device MiniLM embeddings (384-d, L2-normalized) for semantic similarity search |
 | **Git + LSP** | Uncommitted diffs and live diagnostics injected into context |
 | **Project rules** | Auto-loads `AGENTS.md`, `.cursor/rules`, `.clinerules`, `.mitii/rules` |
@@ -73,10 +73,10 @@ In **Agent** mode, the agent uses a set of workflow tools to stay on track:
 
 Every risky operation passes through two cooperating layers:
 
-1. **Decision Policy** — decides *what* is allowed: execution route, planning depth, tool grant, verification requirements, prompt-injection scan.
-2. **Tool Runtime** — enforces the grant: validates tool name, effect, path scope, command rules, network hosts, output limits, mutation batch limits.
+1. **Decision Policy**: decides *what* is allowed: execution route, planning depth, tool grant, verification requirements, prompt-injection scan.
+2. **Tool Runtime**: enforces the grant: validates tool name, effect, path scope, command rules, network hosts, output limits, mutation batch limits.
 
-The unit that flows between them is the **ToolGrant** — a structured policy object that specifies exactly what the agent may do in a given run:
+The unit that flows between them is the **ToolGrant**, a structured policy object that specifies exactly what the agent may do in a given run:
 
 | Dimension | Controls |
 |-----------|----------|
@@ -91,11 +91,11 @@ The unit that flows between them is the **ToolGrant** — a structured policy ob
 
 ### Additional safety features
 
-- **Prompt-injection defense** — Decision Policy scans for injection signals and clamps the ToolGrant before Tool Runtime sees the call
-- **Verification requirements** — agent must produce evidence (test output, typecheck, lint) before claiming success
-- **Mutation rollback** — Tool Runtime can revert a batch of file changes on failure
-- **Audit trail** — every tool call, approval, and rejection is logged (SQLite + JSONL)
-- **MCP Act-mode exclusions** — MCP tools are excluded from Agent mode by default
+- **Prompt-injection defense**: Decision Policy scans for injection signals and clamps the ToolGrant before Tool Runtime sees the call
+- **Verification requirements**: agent must produce evidence (test output, typecheck, lint) before claiming success
+- **Mutation rollback**: Tool Runtime can revert a batch of file changes on failure
+- **Audit trail**: every tool call, approval, and rejection is logged (SQLite + JSONL)
+- **MCP Act-mode exclusions**: MCP tools are excluded from Agent mode by default
 
 ::: details Deep dive
 [Safety Model](/understanding/agent-intelligence/safety) · [Decision Policy](/understanding/agent-intelligence/decision-policy) · [Tool Runtime](/understanding/execution/tool-runtime)
@@ -119,11 +119,11 @@ The unit that flows between them is the **ToolGrant** — a structured policy ob
 
 ## Memory & Context
 
-- **Hybrid retrieval** — FTS5 keyword + vector semantic search, merged and reranked
-- **Access-based retention** — frequently accessed memories are retained longer
-- **Privacy redaction** — hash reinforcement + Jaccard supersede to prevent sensitive data leakage
-- **Checkpoints** — filesystem snapshots for safe rollback of agent changes
-- **Session logs** — JSONL audit trail of every tool call and approval
+- **Hybrid retrieval**: FTS5 keyword + vector semantic search, merged and reranked
+- **Access-based retention**: frequently accessed memories are retained longer
+- **Privacy redaction**: hash reinforcement + Jaccard supersede to prevent sensitive data leakage
+- **Checkpoints**: filesystem snapshots for safe rollback of agent changes
+- **Session logs**: JSONL audit trail of every tool call and approval
 
 ::: details Deep dive
 [Memory](/understanding/agent-intelligence/memory) · [Memory & Checkpoints](/understanding/agent-intelligence/memory-checkpoints)
@@ -160,7 +160,7 @@ Custom skills can be dropped into `.mitii/skills/` to override or extend bundled
 
 ## Provider Support
 
-Mitii is LLM-agnostic via the `LlmPort` injection pattern — the SDK and V8 engine never see API keys; secrets stay on the provider port.
+Mitii is LLM-agnostic via the `LlmPort` injection pattern, the SDK and V8 engine never see API keys; secrets stay on the provider port.
 
 | Provider | Configuration |
 |----------|---------------|
@@ -171,8 +171,8 @@ Mitii is LLM-agnostic via the `LlmPort` injection pattern — the SDK and V8 eng
 | Ollama / LM Studio | Local, no key required |
 | Any OpenAI-compatible | Custom base URL |
 
-- **Token budget** — context window drives derived budgets for input/output
-- **Profiles** — `.mitii/profiles.json` for per-project provider/model presets
+- **Token budget**: context window drives derived budgets for input/output
+- **Profiles**: `.mitii/profiles.json` for per-project provider/model presets
 
 ::: details Deep dive
 [Providers](/integrations/providers) · [Connect a Model](/using/connect-model)
@@ -184,8 +184,8 @@ Mitii is LLM-agnostic via the `LlmPort` injection pattern — the SDK and V8 eng
 
 MCP lets you extend Mitii with external tool servers. It is **off by default** (`mitii.mcp.enabled`).
 
-- **Built-in catalog** — install MCP servers from Settings → Integrations
-- **Act-mode exclusions** — MCP tools are excluded from Agent mode for safety
+- **Built-in catalog**: install MCP servers from Settings → Integrations
+- **Act-mode exclusions**: MCP tools are excluded from Agent mode for safety
 - Same approval policy as built-in tools when enabled
 
 ::: details Deep dive

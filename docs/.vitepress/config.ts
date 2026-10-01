@@ -7,7 +7,6 @@ import {
   AGENT_DOMAIN,
   AGENT_ISSUES_URL,
   AGENT_REPO_URL,
-  DOCS_REPO_URL,
   DISCORD_URL,
   WEBSITE_URL,
   CONTRIBUTING_URL,
@@ -20,7 +19,7 @@ export default withMermaid({
   cleanUrls: true,
   ignoreDeadLinks: true,
   lastUpdated: true,
-  appearance: "dark",
+  appearance: true,
   themeConfig: {
     logo: "/mitii-logo.svg",
     siteTitle: AGENT_NAME,
@@ -41,7 +40,7 @@ export default withMermaid({
       {
         title: "Multi-Platform",
         details:
-          "Works seamlessly across CLI, VS Code, and SDK integrations — one agent, every surface you code in.",
+          "Works seamlessly across CLI, VS Code, and SDK integrations. One agent, every surface you code in.",
         icon: "<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='2' y='3' width='20' height='14' rx='2' ry='2'/><line x1='8' y1='21' x2='16' y2='21'/><line x1='12' y1='17' x2='12' y2='21'/></svg>",
       },
     ],
@@ -76,7 +75,7 @@ export default withMermaid({
         text: "Introduction",
         items: [
           { text: "Getting Started", link: "/getting-started/" },
-          { text: "Overview", link: "/" },
+          { text: "Overview", link: "/overview" },
           { text: "Why Mitii?", link: "/why-mitii" },
           { text: "Features", link: "/features" },
         ],
@@ -93,6 +92,15 @@ export default withMermaid({
               { text: "Commands & Options", link: "/using/CLI/commands" },
               { text: "Providers", link: "/using/CLI/providers" },
               { text: "Skills", link: "/using/CLI/skills" },
+            ],
+          },
+          {
+            text: "Desktop",
+            collapsed: true,
+            items: [
+              { text: "Overview", link: "/using/Desktop/overview" },
+              { text: "Setup", link: "/using/Desktop/setup" },
+              { text: "Engine Protocol", link: "/using/Desktop/protocol" },
             ],
           },
           {
@@ -322,10 +330,6 @@ export default withMermaid({
     footer: {
       message: `${AGENT_FULL_NAME} — ${AGENT_TAGLINE}`,
       copyright: `Copyright © ${new Date().getFullYear()} codewithshinde · ${AGENT_DOMAIN}`,
-    },
-    editLink: {
-      pattern: `${DOCS_REPO_URL}/edit/main/docs/:path`,
-      text: "Edit this page on GitHub",
     },
     outline: { label: "On this page", depth: 3 },
   },

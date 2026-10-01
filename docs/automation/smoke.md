@@ -2,11 +2,11 @@
 
 Smoke scripts validate the CLI automation path end-to-end without a real model. They live under `docs/automation/smoke/` in the source repo.
 
-## Example 1 — Post-commit cover
+## Example 1: Post-commit cover
 
 ```bash
 #!/usr/bin/env bash
-# Smoke Example 1 — post-commit cover path (schedule + optional echo serve tick).
+# Smoke Example 1: post-commit cover path (schedule + optional echo serve tick).
 # With --echo: uses ask/readonly so the echo provider can complete without edits.
 # Without --echo: only validates schedule create + trigger queueing.
 set -euo pipefail
@@ -56,11 +56,11 @@ SPEC_ID="$(node -e "const j=require('/tmp/mitii-e2e1-spec.json'); console.log(j.
 echo "spec=$SPEC_ID"
 ```
 
-## Example 2 — CI failure triage
+## Example 2: CI failure triage
 
 ```bash
 #!/usr/bin/env bash
-# Smoke Example 2 — CI failure event trigger path.
+# Smoke Example 2: CI failure event trigger path.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
 cd "$ROOT"
@@ -103,6 +103,6 @@ bash docs/automation/smoke/example2-ci-failure.sh
 
 ## Related
 
-- [Design & Testing](/automation/DESIGN_AND_TESTING) — full testing strategy
-- [Cron & Events](/automation/cron) — trigger definitions
-- [Daemon](/using/daemon) — the process that executes these
+- [Design & Testing](/automation/DESIGN_AND_TESTING): full testing strategy
+- [Cron & Events](/automation/cron): trigger definitions
+- [Daemon](/using/daemon): the process that executes these

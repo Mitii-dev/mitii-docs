@@ -1,6 +1,6 @@
 # Mitii SDK
 
-`@mitii/sdk` is the programmatic API for the Mitii agent engine. It gives your application a host-neutral way to start a run, stream events, and resume — without importing `@mitii/v8` internals. The CLI and VS Code extension are both built on this package.
+`@mitii/sdk` is the programmatic API for the Mitii agent engine. It gives your application a host-neutral way to start a run, stream events, and resume, without importing `@mitii/v8` internals. The CLI and VS Code extension are both built on this package.
 
 ## Install
 
@@ -26,9 +26,9 @@ apps/cli | apps/vscode | your app
   @mitii/v8       ← agent engine, decision policy, tool runtime
 ```
 
-- **`@mitii/v8`** — agent engine: decision pipeline, tool runtime, repository state
-- **`@mitii/sdk`** — thin, stable API over V8; no filesystem, no provider calls, no secrets
-- **`@mitii/host`** — runtime services (checkpoints, skills, search, indexing); use the provided kit or supply your own ports
+- **`@mitii/v8`**: agent engine: decision pipeline, tool runtime, repository state
+- **`@mitii/sdk`**: thin, stable API over V8; no filesystem, no provider calls, no secrets
+- **`@mitii/host`**: runtime services (checkpoints, skills, search, indexing); use the provided kit or supply your own ports
 
 ### LlmPort injection
 
@@ -82,10 +82,10 @@ const result = await run.result;
 
 ## Run lifecycle
 
-1. **Start** — `client.start(input)` returns a run handle; the engine begins immediately
-2. **Stream** — iterate `run.events` (async iterable of `RunEvent`s) to render progress
-3. **Finish** — `run.result` resolves to `AgentRunResult` (`completed` | `failed` | `cancelled` | `suspended`)
-4. **Resume / cancel** — `client.resume(input)` continues a suspended run; `run.cancel()` aborts in-flight work
+1. **Start**: `client.start(input)` returns a run handle; the engine begins immediately
+2. **Stream**: iterate `run.events` (async iterable of `RunEvent`s) to render progress
+3. **Finish**: `run.result` resolves to `AgentRunResult` (`completed` | `failed` | `cancelled` | `suspended`)
+4. **Resume / cancel**: `client.resume(input)` continues a suspended run; `run.cancel()` aborts in-flight work
 
 ## API reference
 

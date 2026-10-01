@@ -11,9 +11,9 @@ mitii setup                  # interactive: pick provider + write .mitii/config.
 
 `mitii setup` is interactive by default. It asks for:
 
-1. **Provider** — Anthropic, Gemini, OpenAI, DeepSeek, Ollama, OpenAI-compatible, or Mitii API
-2. **API key** — written to `.mitii/config.json` (never printed back)
-3. **Model** (optional) — defaults to the provider's recommended model
+1. **Provider**: Anthropic, Gemini, OpenAI, DeepSeek, Ollama, OpenAI-compatible, or Mitii API
+2. **API key**: written to `.mitii/config.json` (never printed back)
+3. **Model** (optional): defaults to the provider's recommended model
 
 You can also drive it with flags:
 
@@ -137,7 +137,7 @@ Optional. When configured, the CLI injects a `SearchPort` so Decision Policy can
 
 ### Configure SearXNG
 
-**Option A — project or global config** (wins over env):
+**Option A: project or global config** (wins over env):
 
 ```json
 {
@@ -152,7 +152,7 @@ Or
 
 Add it in VS Code by opening setting from Mitii chat window, in provider scroll below and add or paste it inside `SearXNG base URL`, set the key and save it.
 
-**Option B — environment** (used when config has no `searxngBaseUrl`):
+**Option B: environment** (used when config has no `searxngBaseUrl`):
 
 ```bash
 export SEARXNG_BASE_URL=http://192.168.0.91:8888
@@ -162,6 +162,6 @@ export MITII_SEARXNG_URL=http://192.168.0.91:8888
 
 ## Next steps
 
-- [Commands & Options](./commands) — every subcommand and flag
-- [Providers](./providers) — detailed provider reference
-- [Skills](./skills) — attach skills to CLI commands
+- [Commands & Options](./commands): every subcommand and flag
+- [Providers](./providers): detailed provider reference
+- [Skills](./skills): attach skills to CLI commands
