@@ -1,12 +1,12 @@
 # Task List
 
-The Task List module manages the live progress checklist that appears during an agent [run](/understanding/architecture/run-lifecycle). It is the single source of truth for "what is the agent doing right now, and what is left?" — the checklist you see in the host UI while the agent works.
+The Task List module manages the live progress checklist that appears during an agent [run](/understanding/architecture/run-lifecycle). It is the single source of truth for "what is the agent doing right now, and what is left?", the checklist you see in the host UI while the agent works.
 
 The module handles three responsibilities:
 
-1. **Applying updates** — validating and applying `replace`, `patch`, and `clear` operations to the checklist.
-2. **Deriving from plans** — converting a [PlanArtifact](/understanding/agent-intelligence/planning) into a compact, file-scoped execution checklist.
-3. **Serialization** — parsing and emitting markdown checkbox lists so hosts and prompts can render or consume the checklist.
+1. **Applying updates**: validating and applying `replace`, `patch`, and `clear` operations to the checklist.
+2. **Deriving from plans**: converting a [PlanArtifact](/understanding/agent-intelligence/planning) into a compact, file-scoped execution checklist.
+3. **Serialization**: parsing and emitting markdown checkbox lists so hosts and prompts can render or consume the checklist.
 
 It does **not** decide whether a run needs a checklist, plan the work, execute steps, or persist state. Those belong to the engine, [Planning](/understanding/agent-intelligence/planning), and the host respectively.
 
@@ -26,8 +26,8 @@ All mutations go through one of three operations:
 
 A `TaskList` carries a `purpose` field that distinguishes two kinds of checklists:
 
-- **Discovery** (`purpose: "discovery"`) — a temporary, lightweight checklist shown while the engine is still investigating the request. It is replaced once the final plan arrives. Do not persist a discovery list as the approved execution checklist.
-- **Execution** (`purpose: "execution"`) — the concrete, file-scoped checklist derived from a `PlanArtifact`. This is what the user sees as the agent works through the plan.
+- **Discovery** (`purpose: "discovery"`): a temporary, lightweight checklist shown while the engine is still investigating the request. It is replaced once the final plan arrives. Do not persist a discovery list as the approved execution checklist.
+- **Execution** (`purpose: "execution"`): the concrete, file-scoped checklist derived from a `PlanArtifact`. This is what the user sees as the agent works through the plan.
 
 The `source` field records who created the list: `plan`, `agent`, `user`, or `discovery`.
 
@@ -69,7 +69,7 @@ The module enforces these rules on every apply:
 
 ```text
 task-list/
-  pipeline/                 TaskListPipeline — orchestrates the apply flow
+  pipeline/                 TaskListPipeline, orchestrates the apply flow
   actions/                  Apply, derive, serialize, parse implementations
   contracts/
     input/                  TaskListApplyInput
@@ -80,9 +80,9 @@ task-list/
 
 ## Behavioral Notes
 
-- **Derivation preference** — When converting a `PlanArtifact` into a checklist, the module prefers concrete file-scoped implementation and verification steps over process-only discovery rows. The resulting list is stamped with `purpose: "execution"`.
-- **Auto-advance** — The Agent Engine may advance a concrete item to `done` after a successful built-in mutation (e.g., a file edit). The Task List module itself only applies validated changes; it does not infer progress from tool results.
-- **Prompt safety** — The module provides guidance strings that are safe to inject into prompts without leaking internal state.
+- **Derivation preference**: When converting a `PlanArtifact` into a checklist, the module prefers concrete file-scoped implementation and verification steps over process-only discovery rows. The resulting list is stamped with `purpose: "execution"`.
+- **Auto-advance**: The Agent Engine may advance a concrete item to `done` after a successful built-in mutation (e.g., a file edit). The Task List module itself only applies validated changes; it does not infer progress from tool results.
+- **Prompt safety**: The module provides guidance strings that are safe to inject into prompts without leaking internal state.
 
 ## Example
 

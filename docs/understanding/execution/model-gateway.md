@@ -4,8 +4,8 @@ Model Gateway is the provider-neutral LLM boundary in Mitii. It sits between the
 
 In practice:
 
-- **Upstream** — the Agent Engine (the orchestration loop that plans and executes agent turns) and Prompt Construction (the stage that assembles the final prompt from system instructions, context, and user input) never need to know which provider is configured.
-- **Downstream** — each adapter translates the shared request/event types into its provider's wire format and back.
+- **Upstream**: the Agent Engine (the orchestration loop that plans and executes agent turns) and Prompt Construction (the stage that assembles the final prompt from system instructions, context, and user input) never need to know which provider is configured.
+- **Downstream**: each adapter translates the shared request/event types into its provider's wire format and back.
 - Provider responses and failures are normalized into a single event and error vocabulary, so downstream stages can rely on one shape.
 
 ## Module Structure
@@ -40,10 +40,10 @@ model-gateway/
 
 Each adapter implements `LlmPort` for a specific provider family:
 
-- **`EchoLlmPort`** — deterministic and useful for tests; it does not call an external API.
-- **`OpenAiCompatibleLlmPort`** — maps requests to any OpenAI-compatible API (for example Ollama, vLLM, or DeepSeek endpoints).
-- **`AnthropicLlmPort`** — adapts to the Anthropic Messages API.
-- **`GeminiLlmPort`** — adapts to the Gemini API.
+- **`EchoLlmPort`**: deterministic and useful for tests; it does not call an external API.
+- **`OpenAiCompatibleLlmPort`**: maps requests to any OpenAI-compatible API (for example Ollama, vLLM, or DeepSeek endpoints).
+- **`AnthropicLlmPort`**: adapts to the Anthropic Messages API.
+- **`GeminiLlmPort`**: adapts to the Gemini API.
 
 ### Prompt Caching
 
@@ -58,7 +58,7 @@ Both `OpenAiCompatibleLlmPort` and `AnthropicLlmPort` default `capabilities.supp
 
 ### Tool Calls and Errors
 
-- Tool calls stream as `tool_call_delta` events. They are not executed here — the Agent Engine executes them later through the Tool Runtime (the module that resolves and runs tool invocations).
+- Tool calls stream as `tool_call_delta` events. They are not executed here, the Agent Engine executes them later through the Tool Runtime (the module that resolves and runs tool invocations).
 - Provider errors are normalized into `ModelError` and include retryability and an optional retry delay, so callers can decide whether to retry without parsing provider-specific error payloads.
 
 ## Ownership Boundaries

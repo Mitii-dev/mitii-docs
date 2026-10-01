@@ -2,7 +2,7 @@
 
 All settings use the `mitii.*` namespace. You can change them in the **sidebar Settings tab**, in VS Code Settings (*Mitii AI Agent*), or directly in `settings.json`.
 
-This page covers every setting group. Most have sensible defaults — you only need to configure a few to get started.
+This page covers every setting group. Most have sensible defaults; you only need to configure a few to get started.
 
 ## Setting groups at a glance
 
@@ -40,11 +40,11 @@ A minimal working config for a local Ollama model:
 
 What this does in practice:
 
-- **Provider** — points Mitii at your local Ollama instance and tells it which model to use.
-- **Safety** — `guided` means Mitii asks before writing files or running commands, but handles read-only operations on its own.
-- **Checkpoint** — `git-stash` snapshots your working tree before edits so you can roll back.
-- **Indexing** — Mitii builds a semantic index of your codebase when you open a folder, so it can find relevant files without you pointing it at them.
-- **Verification** — after Mitii finishes a task, it runs your lint and test commands to confirm nothing broke.
+- **Provider**: points Mitii at your local Ollama instance and tells it which model to use.
+- **Safety**: `guided` means Mitii asks before writing files or running commands, but handles read-only operations on its own.
+- **Checkpoint**: `git-stash` snapshots your working tree before edits so you can roll back.
+- **Indexing**: Mitii builds a semantic index of your codebase when you open a folder, so it can find relevant files without you pointing it at them.
+- **Verification**: after Mitii finishes a task, it runs your lint and test commands to confirm nothing broke.
 
 That's all you need.
 
@@ -57,11 +57,11 @@ Which LLM powers Mitii and how it connects.
 | `mitii.provider.type` | Provider family: `openai-compatible`, `openai`, `anthropic`, `gemini`, `deepseek`, `cursor`, `codex`, `echo` |
 | `mitii.provider.baseUrl` | API endpoint (defaults per provider) |
 | `mitii.provider.model` | Model name to send requests to |
-| `mitii.provider.contextWindow` | Token budget — Mitii trims prompts to fit this cap |
+| `mitii.provider.contextWindow` | Token budget; Mitii trims prompts to fit this cap |
 | API key | Stored in VS Code SecretStorage; set via the Settings UI, not `settings.json` |
 
 ::: tip
-`openai-compatible` works with any endpoint that speaks the OpenAI chat-completions API — Ollama, LM Studio, vLLM, and most self-hosted servers.
+`openai-compatible` works with any endpoint that speaks the OpenAI chat-completions API: Ollama, LM Studio, vLLM, and most self-hosted servers.
 :::
 
 [Full provider guide →](/integrations/providers)
@@ -85,7 +85,7 @@ How much Mitii can do on its own versus how often it pauses to ask you. This is 
 | `guided` | Mitii handles reads and searches freely, but asks before writing files or running commands |
 | `builder` | File edits are automatic; shell commands still require approval |
 | `pilot` | Same as `builder` with a slightly broader tool allowance |
-| `enterprise` | Strictest profile — no network, all actions reviewed |
+| `enterprise` | Strictest profile: no network, all actions reviewed |
 
 The preset sets a baseline; individual settings override it. For example, `guided` asks before edits, but you can flip `approvalMode` to `auto` to skip that.
 
@@ -114,7 +114,7 @@ How Mitii executes a task: execution limits, parallel subagents, model overrides
 
 ### Plan / Act model overrides
 
-Mitii operates in two phases: **Plan** (analyses the task, drafts a strategy) and **Act** (executes the plan by calling tools). You can assign a different model to each phase — for example, a fast, cheap model for planning and a stronger model for execution.
+Mitii operates in two phases: **Plan** (analyses the task, drafts a strategy) and **Act** (executes the plan by calling tools). You can assign a different model to each phase, for example a fast, cheap model for planning and a stronger model for execution.
 
 | Setting | Purpose |
 |---------|---------|
@@ -131,7 +131,7 @@ Mitii operates in two phases: **Plan** (analyses the task, drafts a strategy) an
 | `mitii.agent.verifyCommands` | `["npm run lint", "npm test"]` | The commands to run for verification |
 
 ::: info Checkpoint strategies in practice
-`git-stash` is the best default for most projects — fast, reversible, works with any Git repo. Use `file-copy` if you're not in a Git repo, or `shadow-git` if you want a fully isolated snapshot that doesn't touch your real `.git` directory.
+`git-stash` is the best default for most projects: fast, reversible, works with any Git repo. Use `file-copy` if you're not in a Git repo, or `shadow-git` if you want a fully isolated snapshot that doesn't touch your real `.git` directory.
 :::
 
 ## Indexing
@@ -164,7 +164,7 @@ In practice: Mitii pulls 20 candidate snippets, reranks them by relevance, and i
 
 ## Memory
 
-Durable facts Mitii learns across sessions — preferences, architectural decisions, project conventions.
+Durable facts Mitii learns across sessions: preferences, architectural decisions, project conventions.
 
 | Setting | Default | What it does |
 |---------|---------|-------------|
@@ -176,7 +176,7 @@ Durable facts Mitii learns across sessions — preferences, architectural decisi
 
 ## MCP (Model Context Protocol)
 
-Connect Mitii to external tool servers — databases, custom APIs, filesystems, or any service that speaks the MCP protocol.
+Connect Mitii to external tool servers: databases, custom APIs, filesystems, or any service that speaks the MCP protocol.
 
 | Setting | Default | What it does |
 |---------|---------|-------------|

@@ -1,6 +1,6 @@
 # Log Viewer
 
-A standalone browser tool for inspecting Mitii session logs and running benchmarks. Lives under `tools/log-viewer/` — not part of the VS Code extension.
+A standalone browser tool for inspecting Mitii session logs and running benchmarks. Lives under `tools/log-viewer/`, not part of the VS Code extension.
 
 ## Run
 
@@ -49,7 +49,7 @@ Open **Benchmark** in the top nav (or `/benchmark`).
 | Action | Control |
 |--------|---------|
 | Live run console | Fullscreen modal (auto on start/refresh while running) |
-| Activity feed | Left drawer — toggle **☰** / **L** |
+| Activity feed | Left drawer; toggle **☰** / **L** |
 | Collapse Runs / Inspector | Header chips **Runs** / **Inspector** |
 | Re-run one case | **Re-run** on any results row |
 | Provider / fixtures | **Provider**, **Reset fixtures** |
@@ -62,5 +62,5 @@ cd tools/log-viewer && npm install
 
 ## Related
 
-- [Configuration](/using/configuration) — log verbosity settings
-- [Development Setup](/development/development-setup) — running tests from source
+- [Configuration](/using/configuration): log verbosity settings
+- [Development Setup](/development/development-setup): running tests from source

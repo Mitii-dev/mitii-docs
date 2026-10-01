@@ -2,7 +2,7 @@
 
 This page covers everything you need to clone, build, and run Mitii locally for development. It assumes you are working on the [Mitii VS Code extension](https://github.com/Mitii-dev/Mitii) or its underlying packages.
 
-Contributions are welcome — see [CONTRIBUTING.md](https://github.com/Mitii-dev/Mitii/blob/main/CONTRIBUTING.md) for contribution guidelines.
+Contributions are welcome, see [CONTRIBUTING.md](https://github.com/Mitii-dev/Mitii/blob/main/CONTRIBUTING.md) for contribution guidelines.
 
 ## Prerequisites
 
@@ -50,7 +50,7 @@ This compiles all packages and rebuilds the `better-sqlite3` native module for t
 ### 3. Launch the extension
 
 1. Open the repo root in VS Code or Cursor.
-2. Press **F5** — this launches the [Extension Development Host](https://code.visualstudio.com/docs/extensions/developing-extensions#_running-and-debugging-extensions) (a separate VS Code window that loads `apps/vscode` via `.vscode/launch.json`).
+2. Press **F5**, this launches the [Extension Development Host](https://code.visualstudio.com/docs/extensions/developing-extensions#_running-and-debugging-extensions) (a separate VS Code window that loads `apps/vscode` via `.vscode/launch.json`).
 3. In that window, open any project folder you want to test against.
 4. Click the **Mitii** icon in the activity bar to open the agent panel.
 
@@ -76,9 +76,9 @@ Mitii is a pnpm monorepo with a layered architecture:
 
 ```
 Mitii/
-├── packages/v8/                  # @mitii/v8 — host-neutral agent runtime (17 modules)
-├── packages/sdk/                 # @mitii/sdk — public API surface over V8
-├── packages/host/                # @mitii/host — shared host kit (indexing, SQLite, ports)
+├── packages/v8/                  # @mitii/v8, host-neutral agent runtime (17 modules)
+├── packages/sdk/                 # @mitii/sdk, public API surface over V8
+├── packages/host/                # @mitii/host, shared host kit (indexing, SQLite, ports)
 ├── apps/vscode/                  # VS Code extension (webview UI, settings, MCP server)
 ├── apps/cli/                     # Headless CLI (@mitii/cli)
 ├── tests/                        # Architecture tests, consumer tests, solid benchmark
@@ -100,7 +100,7 @@ apps/vscode, apps/cli
    @mitii/v8
 ```
 
-Hosts (the VS Code extension, the CLI) interact with the agent exclusively through `@mitii/sdk`. Do not import from `@mitii/v8`'s `actions/` or `internal/` directories directly — those are implementation details that may change without notice.
+Hosts (the VS Code extension, the CLI) interact with the agent exclusively through `@mitii/sdk`. Do not import from `@mitii/v8`'s `actions/` or `internal/` directories directly, those are implementation details that may change without notice.
 
 ## Common Scripts
 

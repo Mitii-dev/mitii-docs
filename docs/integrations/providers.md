@@ -1,6 +1,6 @@
 # LLM providers
 
-Mitii routes all model calls through a configurable **provider** — the LLM backend that powers the agent. You can point Mitii at cloud APIs (Anthropic, OpenAI, Gemini, etc.) or a local inference server (Ollama, LM Studio, vLLM) without changing any other part of the setup.
+Mitii routes all model calls through a configurable **provider**, the LLM backend that powers the agent. You can point Mitii at cloud APIs (Anthropic, OpenAI, Gemini, etc.) or a local inference server (Ollama, LM Studio, vLLM) without changing any other part of the setup.
 
 Configuration lives in one place and works identically across all three surfaces:
 
@@ -14,7 +14,7 @@ Under the hood, providers implement a transport layer (HTTP, streaming, tool cal
 
 ## Supported providers
 
-The settings UI uses **presets** as the primary selector. A preset prefills the base URL, default model, and whether an API key is required. The underlying wire protocol is a **type** (`mitii.provider.type`) — you can override it if you need a non-standard endpoint.
+The settings UI uses **presets** as the primary selector. A preset prefills the base URL, default model, and whether an API key is required. The underlying wire protocol is a **type** (`mitii.provider.type`), you can override it if you need a non-standard endpoint.
 
 | Preset | Type | Best for | API key | Default base URL |
 |--------|------|----------|---------|------------------|
@@ -30,10 +30,10 @@ The settings UI uses **presets** as the primary selector. A preset prefills the 
 ## Getting started
 
 1. **Pick a preset** in Settings → Provider (or run `mitii setup` in the CLI).
-2. **Set the model** — choose from the dropdown or type a custom model name.
-3. **Add your API key** — for cloud providers, enter it in the settings field (stored in VS Code SecretStorage, never written to settings JSON). For local providers, no key is needed.
-4. **Test the connection** — click **Test connection** to verify the endpoint responds. This is a one-shot probe that shows a status indicator; it is not a persisted setting.
-5. **Start using Mitii** — the agent will now route all model calls through your provider.
+2. **Set the model**, choose from the dropdown or type a custom model name.
+3. **Add your API key**, for cloud providers, enter it in the settings field (stored in VS Code SecretStorage, never written to settings JSON). For local providers, no key is needed.
+4. **Test the connection**, click **Test connection** to verify the endpoint responds. This is a one-shot probe that shows a status indicator; it is not a persisted setting.
+5. **Start using Mitii**, the agent will now route all model calls through your provider.
 
 ### Example: local Ollama
 
@@ -83,17 +83,17 @@ Add your API key in the settings field. Mitii uses the native Messages API with 
 
 | Setting | Description |
 |---------|-------------|
-| `mitii.provider.preset` | Preset selector — prefills type, base URL, and model |
+| `mitii.provider.preset` | Preset selector: prefills type, base URL, and model |
 | `mitii.provider.type` | Wire protocol type (see supported providers table) |
 | `mitii.provider.baseUrl` | API base URL (saved exactly as typed) |
 | `mitii.provider.model` | Model name sent in chat requests |
 | `mitii.provider.contextWindow` | Hard cap for prompt trimming, in tokens. `0` uses the model's preset default. |
 | `mitii.provider.maximumOutputTokens` | Reserved output tokens. `0` derives ~20% of context window (minimum 10 240). |
-| `mitii.provider.apiKey` | API key. Stored in VS Code SecretStorage — never written to settings JSON. |
+| `mitii.provider.apiKey` | API key. Stored in VS Code SecretStorage, never written to settings JSON. |
 
 ## Token budget
 
-The context window is the single knob that controls how much information Mitii can work with in one turn. All internal budgets — retrieval depth, prompt compaction, mutation batch size, verification checks, and the per-call token cap — scale proportionally from that window.
+The context window is the single knob that controls how much information Mitii can work with in one turn. All internal budgets: retrieval depth, prompt compaction, mutation batch size, verification checks, and the per-call token cap, scale proportionally from that window.
 
 In the settings UI you'll see a **derived budget** panel that updates live as you adjust the context window or max output. It shows:
 
@@ -117,7 +117,7 @@ Profiles are stored in `.mitii/profiles.json` in your workspace root.
 The CLI reads from `.mitii/config.json` (written by `mitii setup`) or environment variables:
 
 ```bash
-# Interactive setup — walks you through provider, model, and key
+# Interactive setup: walks you through provider, model, and key
 mitii setup
 
 # Or set env vars directly (never printed by --show)

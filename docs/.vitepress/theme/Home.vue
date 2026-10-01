@@ -31,15 +31,15 @@ const actions: Action[] = [
 
 const stats: Stat[] = [
   {
-    value: "45k+",
+    value: "3",
     label: "GitHub stars",
   },
   {
-    value: "500+",
+    value: "0",
     label: "Contributors",
   },
   {
-    value: "70+",
+    value: "0",
     label: "MCP extensions",
   },
 ];
@@ -56,6 +56,7 @@ const stats: Stat[] = [
         :src="isDark ? '/mitii-full-logo-dark.png' : '/mitii-full-logo.png'"
         alt="Mitii"
         class="mitii-logo"
+        loading="lazy"
       />
 
       <!-- Description -->

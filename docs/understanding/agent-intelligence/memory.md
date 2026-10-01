@@ -2,7 +2,7 @@
 
 Memory gives the agent continuity across sessions. It stores durable facts about your project, your preferences, and past decisions, then retrieves the most relevant ones at the start of each turn so the model doesn't start from zero.
 
-In the request pipeline, Memory sits between the host (which owns the store) and [Prompt Construction](/understanding/execution/prompt-construction). It exposes two operations — `retrieve` and `commit` — and returns **instruction blocks** that Prompt Construction injects into the model's context for that turn.
+In the request pipeline, Memory sits between the host (which owns the store) and [Prompt Construction](/understanding/execution/prompt-construction). It exposes two operations (`retrieve` and `commit`) and returns **instruction blocks** that Prompt Construction injects into the model's context for that turn.
 
 ## Core Concepts
 

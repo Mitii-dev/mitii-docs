@@ -1,6 +1,6 @@
 # Context & Indexing
 
-When you ask Mitii to make a change, the agent needs to understand your codebase before it can act. Context indexing is the mechanism that makes this possible: it builds a local, searchable representation of your repository — full-text, structural symbols, and semantic vectors — so the agent can find relevant code quickly without reading every file.
+When you ask Mitii to make a change, the agent needs to understand your codebase before it can act. Context indexing is the mechanism that makes this possible: it builds a local, searchable representation of your repository: full-text, structural symbols, and semantic vectors so the agent can find relevant code quickly without reading every file.
 
 Everything runs on your machine. No source code or index data is sent to external services.
 
@@ -22,10 +22,10 @@ flowchart TD
   G -.-> I[LanceDB optional]
 ```
 
-1. **Discovery** — scans the workspace for indexable files, respecting `.gitignore` and `.mitiiignore`.
-2. **Diff** — compares each file's hash and modification time against the previous index (stored in the SQLite `files` table) to identify what is new or changed.
-3. **Queue** — parallel workers (default concurrency: 2) pick up new and changed files for processing.
-4. **Per-file processing** — each file is split into chunks, indexed for full-text search (SQLite FTS5), parsed with tree-sitter to extract function/class/variable symbols, and optionally embedded into a vector for semantic search.
+1. **Discovery**: scans the workspace for indexable files, respecting `.gitignore` and `.mitiiignore`.
+2. **Diff**: compares each file's hash and modification time against the previous index (stored in the SQLite `files` table) to identify what is new or changed.
+3. **Queue**: parallel workers (default concurrency: 2) pick up new and changed files for processing.
+4. **Per-file processing**: each file is split into chunks, indexed for full-text search (SQLite FTS5), parsed with tree-sitter to extract function/class/variable symbols, and optionally embedded into a vector for semantic search.
 
 The result is stored locally in `.mitii/mitii.sqlite` (or `.mitii/lance/` if you use the LanceDB backend).
 
@@ -67,8 +67,8 @@ Toggle individual sources in **Settings → Context**.
 
 Raw retrieval can return more context than the model's window can hold. Mitii applies two passes to select the most useful snippets:
 
-1. **Reranker** — narrows the top 20 candidates down to the top 8 (configurable via `mitii.context.rerankerTopK`).
-2. **Window budget** — allocates a token budget per source within the model's context window.
+1. **Reranker**: narrows the top 20 candidates down to the top 8 (configurable via `mitii.context.rerankerTopK`).
+2. **Window budget**: allocates a token budget per source within the model's context window.
 
 Anything that doesn't fit is dropped and surfaced in the context debugger with a reason.
 
@@ -105,11 +105,11 @@ During a run, the agent can call these tools to explore the workspace on its own
 
 ### Repo map
 
-The `repo_map` tool applies PageRank over the import/symbol graph to highlight structurally central files. This is useful when the agent doesn't know where to start exploring — it surfaces the files that most other code depends on.
+The `repo_map` tool applies PageRank over the import/symbol graph to highlight structurally central files. This is useful when the agent doesn't know where to start exploring, it surfaces the files that most other code depends on.
 
 ## Embeddings
 
-Vector embeddings power semantic search — finding code by meaning rather than exact keyword match. Mitii generates embeddings **on-device** using a bundled model, so there are no extra API costs or network round-trips.
+Vector embeddings power semantic search, finding code by meaning rather than exact keyword match. Mitii generates embeddings **on-device** using a bundled model, so there are no extra API costs or network round-trips.
 
 | Provider | Description |
 |----------|-------------|
@@ -146,7 +146,7 @@ Control which files are excluded from indexing:
 |------|---------|
 | `.gitignore` | Respected by default |
 | `.mitiiignore` | Additional Mitii-specific ignores |
-| `.thunderignore` | Legacy — still honored for backward compatibility |
+| `.thunderignore` | Legacy, still honored for backward compatibility |
 
 ## Storage
 

@@ -31,6 +31,6 @@ parseRequiredMcpMentions.ts   @mcp: parse + merge
 
 ## Related
 
-- [MCP](/integrations/mcp) — how Mitii connects to external MCP servers
-- [MCP Web Server](/integrations/mcp-web) — how other agents call Mitii
-- [Tool Runtime](/understanding/execution/tool-runtime) — where MCP tools are executed
+- [MCP](/integrations/mcp)(how Mitii connects to external MCP servers)
+- [MCP Web Server](/integrations/mcp-web)(how other agents call Mitii)
+- [Tool Runtime](/understanding/execution/tool-runtime)(where MCP tools are executed)

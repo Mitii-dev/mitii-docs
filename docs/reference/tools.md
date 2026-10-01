@@ -1,13 +1,13 @@
 # Built-in tools
 
-Mitii provides 20+ tools that the agent can invoke to read, modify, and navigate your codebase. Tools are the primary mechanism through which the agent interacts with your project — every file read, edit, command execution, and symbol lookup goes through a tool call.
+Mitii provides 20+ tools that the agent can invoke to read, modify, and navigate your codebase. Tools are the primary mechanism through which the agent interacts with your project in every file read, edit, command execution, and symbol lookup goes through a tool call.
 
 ## How tool calls are authorized
 
 Every tool call passes through two enforcement layers before it reaches your code:
 
-1. **Decision Policy** — evaluates the current request context (mode, user intent, autonomy level) and produces an `ExecutionDecision` that defines which tools are permitted and under what constraints.
-2. **Tool Runtime** — validates each individual call against the resulting `ToolGrant`, executes it, sanitizes the output, and records a structured audit event.
+1. **Decision Policy**: evaluates the current request context (mode, user intent, autonomy level) and produces an `ExecutionDecision` that defines which tools are permitted and under what constraints.
+2. **Tool Runtime**: validates each individual call against the resulting `ToolGrant`, executes it, sanitizes the output, and records a structured audit event.
 
 The Tool Runtime is purely an enforcement layer: it never decides *whether* a tool should be allowed. If a call falls outside the grant, it is rejected before any side effects occur.
 
@@ -47,7 +47,7 @@ Mutations to the workspace. These require a write grant and, depending on your a
 | `memory_write` | Store an observation (low risk, usually auto-allowed) |
 | `save_task_state` | Persist mid-task progress |
 
-Write tools are blocked entirely in Ask, Plan, and Review modes. The Tool Runtime supports **mutation rollback** — if a multi-file write fails partway through a transaction, prior file state is restored.
+Write tools are blocked entirely in Ask, Plan, and Review modes. The Tool Runtime supports **mutation rollback**, if a multi-file write fails partway through a transaction, prior file state is restored.
 
 ### Shell tools
 
@@ -91,7 +91,7 @@ Tools the agent uses to manage its own task flow and communicate with you.
 |------|-------------|
 | `fetch_web` | Fetch URL content (documentation, API responses) |
 
-- Not a headless browser — no JavaScript execution
+- Not a headless browser, no JavaScript execution
 - 30-second timeout, 50k character cap, HTML converted to plain text
 - Requires network access (`allowNetwork` setting or an autonomy preset that permits it)
 
@@ -99,7 +99,7 @@ Tools the agent uses to manage its own task flow and communicate with you.
 
 [Model Context Protocol](https://modelcontextprotocol.io/) tools extend the agent with external capabilities (e.g. database queries, custom integrations). They appear as `mcp__{server}__{tool}`.
 
-- **Off by default** — enable with `mitii.mcp.enabled`
+- **Off by default**, enable with `mitii.mcp.enabled`
 - Registered at MCP server connect time
 - Pass through the same Tool Runtime enforcement as built-in tools
 - In Act mode, specific MCP tools can be excluded via MCP exclusions
@@ -146,12 +146,12 @@ Twelve skills ship bundled with the SDK:
 
 Approved shell scripts placed in `.mitii/` can be executed via `execute_workspace_script`. The SDK ships two checkpoint scripts:
 
-- `write-checkpoint.sh` — snapshot task state
-- `read-checkpoint.sh` — restore task state
+- `write-checkpoint.sh`, snapshot task state
+- `read-checkpoint.sh`, restore task state
 
 ## Project rules
 
-In addition to tools, Mitii auto-loads project rule files into every session as contextual guidance. These are not tools — they shape the agent's behavior without requiring a tool call.
+In addition to tools, Mitii auto-loads project rule files into every session as contextual guidance. These are not tools, they shape the agent's behavior without requiring a tool call.
 
 Recognized rule files:
 
@@ -164,10 +164,10 @@ Commit these to your repository for consistent agent behavior across the team.
 
 Every tool call, regardless of category, receives the following guarantees from the Tool Runtime:
 
-- **Grant validation** — the call is rejected if it falls outside the `ToolGrant` scope
-- **Output sanitization** — secrets are redacted and output is truncated to a bounded size
-- **Structured audit** — tool name, args hash, duration, and result status are logged per call
-- **Mutation rollback** — failed multi-file writes restore prior file state
+- **Grant validation**: the call is rejected if it falls outside the `ToolGrant` scope
+- **Output sanitization**: secrets are redacted and output is truncated to a bounded size
+- **Structured audit**: tool name, args hash, duration, and result status are logged per call
+- **Mutation rollback**: failed multi-file writes restore prior file state
 
 ## Codebase location
 

@@ -29,6 +29,13 @@ const applications: Application[] = [
     href: "/using/vscode/overview",
   },
   {
+    title: "Desktop",
+    description:
+      "Chat, manage repos, and inspect git, all in a local desktop app powered by the Mitii engine.",
+    icon: "desktop",
+    href: "/using/Desktop/overview",
+  },
+  {
     title: "Autonomous",
     description:
       "Let Mitii work through complex coding tasks while keeping you in control.",
@@ -100,6 +107,22 @@ const applications: Application[] = [
           >
             <path d="m8 4-5 8 5 8" />
             <path d="m16 4 5 8-5 8" />
+          </svg>
+          <svg
+            v-else-if="application.icon === 'desktop'"
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <path d="M8 21h8" />
+            <path d="M12 17v4" />
           </svg>
           <svg
             v-else

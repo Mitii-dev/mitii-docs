@@ -1,6 +1,6 @@
 # Repository State
 
-Repository State is the publication authority for workspace state. It takes the output of workspace indexing and publishes it as an immutable, referenceable snapshot — a **state token** — that downstream stages (Repository Context, verification, active-run retention) can rely on without re-reading the filesystem.
+Repository State is the publication authority for workspace state. It takes the output of workspace indexing and publishes it as an immutable, referenceable snapshot: a **state token** that downstream stages (Repository Context, verification, active-run retention) can rely on without re-reading the filesystem.
 
 In short: it answers *"what is the current indexed state of this workspace, and how do I refer to it stably?"*
 
@@ -55,7 +55,7 @@ A typical flow:
 
 ## Technical Details
 
-- Published descriptors are **immutable** — once published, they are never mutated.
+- Published descriptors are **immutable**: once published, they are never mutated.
 - Readiness is derived from scan completeness: partial, filtered, truncated, or cancelled scans publish as `degraded` or `unavailable`.
 - `REPOSITORY_INDEX_FORMAT` changes require hosts to rebuild persisted indexes.
 - Source analysis injects tree-sitter tags queries through `TreeSitterRuntimePort`; bump `graphBuilderVersion` when those queries change call-graph facts.
@@ -71,7 +71,7 @@ A typical flow:
 
 ```text
 repository-state/
-  pipeline/                 RepositoryStatePipeline — orchestrates publish/read/pin
+  pipeline/                 RepositoryStatePipeline, orchestrates publish/read/pin
     ws-indexing-pipeline/   Converts workspace-indexing output into publish candidates
   contracts/
     input/                  Publish, read, pin, unpin input types

@@ -1,6 +1,6 @@
 # Planning
 
-Planning is the module that produces a structured, actionable plan for the agent to follow. When the engine decides a visible plan is warranted (based on user mode, policy, or task complexity), it invokes Planning to turn task evidence into a `PlanArtifact` — a document with phases, steps, context references, risks, alternatives, and verification guidance.
+Planning is the module that produces a structured, actionable plan for the agent to follow. When the engine decides a visible plan is warranted (based on user mode, policy, or task complexity), it invokes Planning to turn task evidence into a `PlanArtifact`: a document with phases, steps, context references, risks, alternatives, and verification guidance.
 
 Planning does **not** execute steps, approve plans, or own the task list. It produces the plan artifact and serializes it for downstream consumers (the engine, the host UI, or prompt injection).
 
@@ -19,7 +19,7 @@ A request can have `planningDepth: visible` with `explorationDepth: quick` (plan
 
 ### Strategies
 
-Planning resolves one of four strategies via a deterministic rule table — no LLM call is involved in strategy selection:
+Planning resolves one of four strategies via a deterministic rule table (no LLM call is involved in strategy selection):
 
 | Strategy | Meaning |
 | --- | --- |
@@ -38,13 +38,13 @@ When the strategy is `discover_and_plan`, the engine runs a read-only discovery 
 
 The public entry point is `PlanningPipeline.plan(input)`. Internally the pipeline follows a fixed sequence:
 
-1. **Validate** — Check the `PlanningInput` shape. If `planningDepth` is `none`, return `blocked` immediately.
-2. **Resolve strategy** — The engine calls `resolvePlanStrategyRules` *before* invoking Planning (see Strategy Resolution below). The resolved strategy is passed in as `strategyOverride`.
-3. **Compile discovery** (if applicable) — If a `DiscoveryBrief` is present, compile it into change surfaces and evidence scoping.
-4. **Draft** — Produce a structured plan. For `discover_and_plan`, one optional model call refines the draft; for all other strategies, drafting is fully deterministic.
-5. **Validate sections** — Ensure required phases (Change, Verify) are present. Strip any stray Discover/Inspect/Explore phase if a `DiscoveryBrief` already exists.
-6. **Compact** — Trim the plan to fit the token budget.
-7. **Serialize** — Produce the `PlanningResult` with the plan, strategy decision, reason codes, and budget usage.
+1. **Validate**: Check the `PlanningInput` shape. If `planningDepth` is `none`, return `blocked` immediately.
+2. **Resolve strategy**: The engine calls `resolvePlanStrategyRules` *before* invoking Planning (see Strategy Resolution below). The resolved strategy is passed in as `strategyOverride`.
+3. **Compile discovery** (if applicable): If a `DiscoveryBrief` is present, compile it into change surfaces and evidence scoping.
+4. **Draft**: Produce a structured plan. For `discover_and_plan`, one optional model call refines the draft; for all other strategies, drafting is fully deterministic.
+5. **Validate sections**: Ensure required phases (Change, Verify) are present. Strip any stray Discover/Inspect/Explore phase if a `DiscoveryBrief` already exists.
+6. **Compact**: Trim the plan to fit the token budget.
+7. **Serialize**: Produce the `PlanningResult` with the plan, strategy decision, reason codes, and budget usage.
 
 ### Strategy Resolution
 
@@ -70,7 +70,7 @@ Notes:
 The only LLM call in the entire planning pipeline is a one-shot draft for `discover_and_plan`. It turns the already-gathered `DiscoveryBrief` into Change + Verify step wording. Key constraints:
 
 - Runs at most once per plan.
-- Scoped to Change + Verify steps only — it cannot alter approval requirements, plan dimensions, gates, or tool grants.
+- Scoped to Change + Verify steps only: it cannot alter approval requirements, plan dimensions, gates, or tool grants.
 - Skipped when the brief is thin (`confidence: low` or no change surfaces).
 - Falls back to the deterministic discovery skeleton if the call fails or returns nothing usable.
 - Target refs are filtered against the scoped repo map, discovery evidence, in-scope diagnostics, and explicit targets.
@@ -122,7 +122,7 @@ The only LLM call in the entire planning pipeline is a one-shot draft for `disco
 
 **Owns**: Structured plan creation, strategy rule evaluation, serialization, and formatting.
 
-**Does not own**: Plan approval UI, tool execution, route authority, task-list persistence, or verification execution. Hosts own pending-plan storage and must carry `planStrategy` with the artifact. The engine owns orchestration — when to invoke Planning, whether to run discovery first, and how to persist the strategy decision.
+**Does not own**: Plan approval UI, tool execution, route authority, task-list persistence, or verification execution. Hosts own pending-plan storage and must carry `planStrategy` with the artifact. The engine owns orchestration: when to invoke Planning, whether to run discovery first, and how to persist the strategy decision.
 
 ## Tests
 
@@ -140,7 +140,7 @@ pnpm exec vitest run packages/v8/src/engine/agent-engine/tests/AgentEngineTaskLi
 
 A realistic request: `@packages/mui-builder fix all the ts errors`
 
-The engine captures a preflight build snapshot, resolves the strategy, and invokes Planning. Because the ask has a repair intent with in-scope diagnostics, the strategy resolves to `follow_evidence` — no discovery pass runs.
+The engine captures a preflight build snapshot, resolves the strategy, and invokes Planning. Because the ask has a repair intent with in-scope diagnostics, the strategy resolves to `follow_evidence`, no discovery pass runs.
 
 ### Input (PlanningInput)
 

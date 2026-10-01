@@ -4,10 +4,10 @@ Request Intake is the first module in the V8 pipeline. It receives the raw user 
 
 ## What it does
 
-- **Validates** — requires meaningful content through a message or referenced artifacts
-- **Normalizes** — mode (`ask` / `plan` / `agent`), origin, workspace scope, referenced artifacts, and correlation metadata
-- **Assigns identity** — request IDs and timestamps through injected ports (no global clock)
-- **Strips MCP mentions** — in `ask` / `plan` modes, `@mcp:` mentions are removed before the engine runs (see [MCP Attach](/understanding/execution/mcp-attach))
+- **Validates**: requires meaningful content through a message or referenced artifacts
+- **Normalizes**: mode (`ask` / `plan` / `agent`), origin, workspace scope, referenced artifacts, and correlation metadata
+- **Assigns identity**: request IDs and timestamps through injected ports (no global clock)
+- **Strips MCP mentions**: in `ask` / `plan` modes, `@mcp:` mentions are removed before the engine runs (see [MCP Attach](/understanding/execution/mcp-attach))
 
 ## Ownership boundaries
 
@@ -23,6 +23,6 @@ User input → Request Intake → Request Understanding → Planning → Executi
 
 ## Related
 
-- [Request Understanding](/understanding/agent-intelligence/request-understanding) — next stage in the pipeline
-- [System Architecture](/understanding/architecture/system-architecture) — full module map
-- [Run Lifecycle](/understanding/architecture/run-lifecycle) — how a run flows through modules
+- [Request Understanding](/understanding/agent-intelligence/request-understanding): next stage in the pipeline
+- [System Architecture](/understanding/architecture/system-architecture): full module map
+- [Run Lifecycle](/understanding/architecture/run-lifecycle): how a run flows through modules

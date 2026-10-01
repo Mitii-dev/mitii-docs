@@ -2,8 +2,8 @@
 
 Mitii persists two kinds of state across sessions:
 
-- **Memory** — durable facts about your project, your preferences, and past decisions. The memory pipeline (in `@mitii/v8`) retrieves relevant facts at the start of each turn and injects them into the model's context so the agent doesn't start from zero.
-- **Checkpoints** — snapshots of file state taken before approved writes, so you can roll back a change. Checkpoint strategies are implemented in `@mitii/host`.
+- **Memory**: durable facts about your project, your preferences, and past decisions. The memory pipeline (in `@mitii/v8`) retrieves relevant facts at the start of each turn and injects them into the model's context so the agent doesn't start from zero.
+- **Checkpoints**: snapshots of file state taken before approved writes, so you can roll back a change. Checkpoint strategies are implemented in `@mitii/host`.
 
 Together they give the agent continuity (memory) and safety (checkpoints).
 
@@ -11,7 +11,7 @@ Together they give the agent continuity (memory) and safety (checkpoints).
 
 ## Long-term memory
 
-Memory stores structured facts — decisions, preferences, bugfixes, architecture notes — scoped to a **user**, **workspace**, or **project**. At the start of a turn, the memory pipeline retrieves the facts most relevant to the current request and hands them to Prompt Construction as **instruction blocks**, which are appended to the model's context for that turn.
+Memory stores structured facts (decisions, preferences, bugfixes, architecture notes) scoped to a **user**, **workspace**, or **project**. At the start of a turn, the memory pipeline retrieves the facts most relevant to the current request and hands them to Prompt Construction as **instruction blocks**, which are appended to the model's context for that turn.
 
 ### How retrieval works
 
@@ -26,9 +26,9 @@ Memory stores structured facts — decisions, preferences, bugfixes, architectur
 
 When a new fact is stored, it passes through three safeguards:
 
-- **Privacy redaction** — secret patterns (API keys, tokens) are stripped before the fact is written.
-- **Hash reinforcement** — a content hash is attached so identical facts can be detected.
-- **Jaccard supersede** — near-duplicate facts (high Jaccard similarity) replace the older version instead of accumulating, so the store doesn't grow unbounded.
+- **Privacy redaction**: secret patterns (API keys, tokens) are stripped before the fact is written.
+- **Hash reinforcement**: a content hash is attached so identical facts can be detected.
+- **Jaccard supersede**: near-duplicate facts (high Jaccard similarity) replace the older version instead of accumulating, so the store doesn't grow unbounded.
 
 ### Tools
 
@@ -41,9 +41,9 @@ Facts are typed with one of these observation types: `decision`, `bugfix`, `refa
 
 ### How memory gets populated
 
-1. **Agent writes** — the model calls `memory_write` during a task (e.g. after learning a project convention).
-2. **Post-task extraction** — a host capture helper (`buildSyntheticMemoryDraft`) asynchronously summarizes completed work into candidate facts.
-3. **Passive injection** — on the next turn, relevant facts are retrieved and injected as instruction blocks.
+1. **Agent writes**: the model calls `memory_write` during a task (e.g. after learning a project convention).
+2. **Post-task extraction**: a host capture helper (`buildSyntheticMemoryDraft`) asynchronously summarizes completed work into candidate facts.
+3. **Passive injection**: on the next turn, relevant facts are retrieved and injected as instruction blocks.
 
 A typical cycle: in session one you tell the agent "we use pnpm, not npm" and it commits that as a `user_preference`. In session two, the retrieval pipeline surfaces that fact before the agent runs any install command.
 
@@ -113,9 +113,9 @@ Old checkpoints are pruned after **7 days** by default.
 
 Beyond memory and checkpoints, Mitii persists session-level state:
 
-- **History** — the **History** tab lists past chat threads (title, message count, token totals). Open a thread to resume the conversation. Stored in SQLite `agent_sessions` / `agent_turns` (injected by the app).
-- **Plans** — saved to the SQLite `task_plans` table and `.mitii/tasks/<session-id>/plan.json`. Plans survive VS Code restarts and approval pauses.
-- **Session logs** — structured JSONL in `.mitii/logs/<session-id>.jsonl`, containing tool start/end events, approval decisions, token usage rollups, and errors with timing. Export via the **Mitii: Export Session Log** command.
+- **History**: the **History** tab lists past chat threads (title, message count, token totals). Open a thread to resume the conversation. Stored in SQLite `agent_sessions` / `agent_turns` (injected by the app).
+- **Plans**: saved to the SQLite `task_plans` table and `.mitii/tasks/<session-id>/plan.json`. Plans survive VS Code restarts and approval pauses.
+- **Session logs**: structured JSONL in `.mitii/logs/<session-id>.jsonl`, containing tool start/end events, approval decisions, token usage rollups, and errors with timing. Export via the **Mitii: Export Session Log** command.
 
 ---
 

@@ -116,7 +116,7 @@ jobs:
 
 ## Related
 
-- [Automation overview](/automation/) — design principles
-- [Cron & Events](/automation/cron) — trigger definitions
-- [Smoke scripts](/automation/smoke) — how to test these paths
-- [Shipping](/automation/SHIP) — E2E shipping loops
+- [Automation overview](/automation/): design principles
+- [Cron & Events](/automation/cron): trigger definitions
+- [Smoke scripts](/automation/smoke): how to test these paths
+- [Shipping](/automation/SHIP): E2E shipping loops

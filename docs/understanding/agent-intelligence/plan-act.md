@@ -17,7 +17,7 @@ Mitii operates in four modes. You switch between them from the chat input toolba
 The legacy `act` mode name maps to `agent`.
 :::
 
-The key distinction: **Plan** and **Agent** are two halves of the same workflow. Plan mode produces a proposal; Agent mode carries it out. You can also use either independently — ask a question in Ask mode, or jump straight to Agent mode for a task you already understand.
+The key distinction: **Plan** and **Agent** are two halves of the same workflow. Plan mode produces a proposal; Agent mode carries it out. You can also use either independently: ask a question in Ask mode, or jump straight to Agent mode for a task you already understand.
 
 ## Typical workflow
 
@@ -34,11 +34,11 @@ flowchart LR
   D -- no --> A
 ```
 
-1. **Describe the task** (Plan mode) — Explain what you want in natural language. The agent reads relevant files, runs diagnostics, and outputs a structured plan with ordered steps.
-2. **Review the plan** — Read the steps in the Plan panel. If the scope is too broad or missing something, adjust it in chat before proceeding.
-3. **Execute** (Agent mode) — Ask the agent to execute. It works through the steps, making file edits and running commands. Each mutating action requires your approval via an approval card.
-4. **Verify** — After execution, the agent runs your configured verification commands (lint, tests, typecheck) and reports pass/fail per command.
-5. **Review** (optional) — Switch to Review mode for a read-only pass over the changes, or ask the agent to summarize what was done.
+1. **Describe the task** (Plan mode): Explain what you want in natural language. The agent reads relevant files, runs diagnostics, and outputs a structured plan with ordered steps.
+2. **Review the plan**: Read the steps in the Plan panel. If the scope is too broad or missing something, adjust it in chat before proceeding.
+3. **Execute** (Agent mode): Ask the agent to execute. It works through the steps, making file edits and running commands. Each mutating action requires your approval via an approval card.
+4. **Verify**: After execution, the agent runs your configured verification commands (lint, tests, typecheck) and reports pass/fail per command.
+5. **Review** (optional): Switch to Review mode for a read-only pass over the changes, or ask the agent to summarize what was done.
 
 ## How it works under the hood
 
@@ -47,10 +47,10 @@ The agent runtime is organized into three layers. Understanding them helps when 
 | Layer | Responsibility |
 |-------|----------------|
 | **Agent Engine** | Orchestrates the run lifecycle: starts the model/tool loop, streams events, manages checkpoints, and supports suspend/resume |
-| **Decision Policy** | Converts your request and repository evidence into an `ExecutionDecision` — which route to take (Ask / Plan / Agent), whether planning is required, and which tools are permitted |
+| **Decision Policy** | Converts your request and repository evidence into an `ExecutionDecision`: which route to take (Ask / Plan / Agent), whether planning is required, and which tools are permitted |
 | **Tool Runtime** | Validates every tool call against the current permission grant before execution, then returns a bounded result |
 
-The Decision Policy is the authority module: it decides *what* the agent is allowed to do. The Tool Runtime is the enforcement layer: it checks *each individual call* against that decision. Neither layer grants permissions on its own — the grant is always derived from the Decision Policy output.
+The Decision Policy is the authority module: it decides *what* the agent is allowed to do. The Tool Runtime is the enforcement layer: it checks *each individual call* against that decision. Neither layer grants permissions on its own, the grant is always derived from the Decision Policy output.
 
 ### Plan engine
 
@@ -76,7 +76,7 @@ Each skill defines three phases:
 | **Change** | Implement with minimal, reviewable diffs |
 | **Verify** | Prove the change with tests, typecheck, and lint |
 
-The agent selects the most relevant skill for the current task based on intent, route, and priority. Skills in the same `conflictGroup` are mutually exclusive — the highest-priority skill wins.
+The agent selects the most relevant skill for the current task based on intent, route, and priority. Skills in the same `conflictGroup` are mutually exclusive, the highest-priority skill wins.
 
 **Auto-loaded planning skills:**
 

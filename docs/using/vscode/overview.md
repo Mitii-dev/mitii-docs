@@ -1,6 +1,8 @@
-# VS Code Extension — Overview
+# VS Code Extension Overview
 
-Mitii is a local-first AI coding agent for VS Code. It indexes your repository, answers in Ask mode, plans in Plan mode, applies changes in Agent mode, and can provide FIM inline autocomplete — with approvals, checkpoints, and OpenAI-compatible providers (Ollama, LM Studio, cloud `/v1` APIs).
+Mitii is a local-first AI coding agent for VS Code. It indexes your repository, answers in Ask mode, plans in Plan mode, applies changes in Agent mode, and can provide FIM inline autocomplete with approvals, checkpoints, and OpenAI-compatible providers (Ollama, LM Studio, cloud `/v1` APIs).
+
+![Mitii VS Code extension sidebar with chat, explorer, and git panes](/mitii-vscode.png)
 
 **Marketplace id:** `mitii.mitii-ai-agent`
 
@@ -24,7 +26,7 @@ For cloud providers, run **Mitii: Set Provider API Key** (stored in VS Code Secr
 
 - **Repository-aware context** – SQLite FTS5, symbols, optional vectors, repo map, diagnostics, Git state, and `@` attachments
 - **Skills** – force-attach playbooks with `/` or `@skill:id` in chat (up to 3 per message); workspace skills in `.mitii/skills/`
-- **Ask / Plan / Agent** – read-only Q&A, structured plans, and controlled edits. Use the collapsible **Review** bar above chat (file count → Review) for structured working-tree findings via `emit_review_finding` — not a fourth mode. After findings appear, use **Dismiss**, **Fix**, or **Fix all** (Agent + `fix-review-findings` recipe).
+- **Ask / Plan / Agent** – read-only Q&A, structured plans, and controlled edits. Use the collapsible **Review** bar above chat (file count → Review) for structured working-tree findings via `emit_review_finding`, not a fourth mode. After findings appear, use **Dismiss**, **Fix**, or **Fix all** (Agent + `fix-review-findings` recipe).
 - **FIM autocomplete** – optional inline ghost text from a low-latency OpenAI-compatible `prompt` + `suffix` endpoint
 - **Safety** – configurable approvals, path containment, command policy, pre-write checkpoints, workspace trust
 - **Providers** – Echo, Anthropic (Claude), Gemini, and OpenAI-compatible endpoints (DeepSeek, OpenRouter, Azure, Ollama, custom `/v1`)
@@ -58,5 +60,5 @@ For cloud providers, run **Mitii: Set Provider API Key** (stored in VS Code Secr
 
 ## Next
 
-- [Settings](./settings) — full configuration reference
-- [Skills](./skills) — attaching skills and recipes
+- [Settings](./settings):(full configuration reference)
+- [Skills](./skills)(attaching skills and recipes)

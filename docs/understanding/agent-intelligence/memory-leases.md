@@ -4,9 +4,9 @@ Memory leases are a concurrency-control mechanism for Mitii's memory pipeline. T
 
 ## Semantics (agentmemory-inspired)
 
-- **Acquire with TTL** — default 10 minutes, max 60 minutes
-- **Same holder re-acquires** — the lease is extended, not re-contended
-- **Different holder** — must wait for TTL expiry or explicit release
+- **Acquire with TTL**: default 10 minutes, max 60 minutes
+- **Same holder re-acquires**: the lease is extended, not re-contended
+- **Different holder**: must wait for TTL expiry or explicit release
 
 ## Operations
 
@@ -21,6 +21,6 @@ Without leases, a nightly `memory-consolidate` cron job could race with an inter
 
 ## Related
 
-- [Memory Checkpoints](/understanding/agent-intelligence/memory-checkpoints) — how memory is stored and retrieved
-- [Memory](/understanding/agent-intelligence/memory) — memory pipeline overview
-- [Automation](/automation/) — cron jobs that use leases
+- [Memory Checkpoints](/understanding/agent-intelligence/memory-checkpoints): how memory is stored and retrieved
+- [Memory](/understanding/agent-intelligence/memory): memory pipeline overview
+- [Automation](/automation/): cron jobs that use leases

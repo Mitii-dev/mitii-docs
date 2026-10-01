@@ -46,7 +46,7 @@ You can define servers in a JSON config file. Each server entry specifies a **tr
 
 ### Examples
 
-**Local process (stdio)** — runs a filesystem server scoped to the current directory:
+**Local process (stdio)**: runs a filesystem server scoped to the current directory:
 
 ```json
 {
@@ -59,7 +59,7 @@ You can define servers in a JSON config file. Each server entry specifies a **tr
 }
 ```
 
-**Remote SSE endpoint** — connects to a hosted MCP server with a bearer token:
+**Remote SSE endpoint**, connects to a hosted MCP server with a bearer token:
 
 ```json
 {
@@ -75,7 +75,7 @@ You can define servers in a JSON config file. Each server entry specifies a **tr
 }
 ```
 
-**Streamable HTTP** — same shape as SSE, but for servers implementing the newer spec:
+**Streamable HTTP**, same shape as SSE, but for servers implementing the newer spec:
 
 ```json
 {

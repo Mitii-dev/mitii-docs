@@ -40,5 +40,5 @@ packages/mcp/web/
 
 ## Related
 
-- [MCP (client)](/integrations/mcp) — how Mitii calls external MCP servers
-- [Search Kit](/integrations/search-kit) — the retrieval engine behind this server
+- [MCP (client)](/integrations/mcp): how Mitii calls external MCP servers
+- [Search Kit](/integrations/search-kit): the retrieval engine behind this server

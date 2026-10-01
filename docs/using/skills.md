@@ -261,5 +261,5 @@ This disables only workspace-uploaded skills. Mitii-bundled default skills still
 
 ## See also
 
-- [How skill selection works](/understanding/agent-intelligence/skills) — the pipeline, budget, and conflict resolution behind the scenes.
-- [Reference: Tools](/reference/tools#skills) — the full list of bundled skills.
+- [How skill selection works](/understanding/agent-intelligence/skills): the pipeline, budget, and conflict resolution behind the scenes.
+- [Reference: Tools](/reference/tools#skills): the full list of bundled skills.
